@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_one.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/06/16 21:28:29 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/17 12:37:46 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@
 
 typedef struct s_philosopher
 {
+	char	has_fork : 1;
+	char	is_eating : 1;
+	char	is_sleeping : 1;
+	char	is_thinking : 1;
+	char	died : 1;
 }				t_philosopher;
 
 typedef struct s_waiter

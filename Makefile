@@ -3,48 +3,69 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
+#    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/06/16 21:12:28 by mrosario         ###   ########.fr        #
+#    Updated: 2021/06/17 18:10:23 by miki             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philosophers
 
-P1 = philo_one
-P2 = philo_two
-P3 = philo_three
+GRN = \e[1;32m
+RED = \e[1;31m
+YEL = \e[1;33m
+DEL = \e[2K\r
+RST = \e[0m
 
-P1DIR = ./philo_one/
-P2DIR = ./philo_two/
-P3DIR = ./philo_three/
+P1 = ./philo_one/philo_one
+P2 = ./philo_two/philo_two
+P3 = ./philo_three/philo_three
 
-P1FILES = $(P1DIR)main.c
+P1SRC = ./philo_one/src/
+P2SRC = ./philo_two/src/
+P3SRC = ./philo_three/src/
 
-CFLAG = -Wall -Werror -Wextra
+P1FILES = $(P1SRC)main.c
 
-LIBS = 
+PHILO_LIB = ./philo_lib/libphilo.a
 
-$(NAME): $(P1)
+FLAGS = -Wall -Werror -Wextra
+
+LIBS = -I ./includes -L ./philo_lib/ -lphilo
+
+$(NAME): $(PHILO_LIB) $(P1)
 
 $(P1):
-	gcc $(CFLAG) $(P1FILES) -o $(P1) $(LIBS)
+	@printf "$(YEL)Compiling program...$(RST)"
+	@gcc $(FLAGS) $(P1FILES) -o $(P1) $(LIBS)
+	@printf "$(DEL)$(GRN)Compiled program\n$(RST)"
+
+$(PHILO_LIB):
+	@make --no-print-directory -C ./philo_lib
+	@make clean --no-print-directory -C ./philo_lib
 
 all: $(NAME)
 
 debug:
 	#gcc $(CFLAG) $(P1FILES) -g3 -fsanitize=address -o $(P1) $(LIBS)
-	gcc $(CFLAG) $(P1FILES) -g -o $(P1) $(LIBS)
+	@gcc $(CFLAG) $(P1FILES) -g -o $(P1) $(LIBS)
 
 clean:
-	rm -f *.o
+	@printf "$(YEL)Deleting program object files...$(RST)"
+	@rm -f *.o
+	@printf "$(DEL)$(GRN)Deleted program object files\n$(RST)"
 
-fclean: clean
-	rm -f $(P1)
+cleanlib:
+	@make --no-print-directory fclean -C ./philo_lib
+
+fclean: clean cleanlib
+	@printf "$(YEL)Deleting program...$(RST)"
+	@rm -f $(P1)
+	@printf "$(DEL)$(GRN)Deleted program\n$(RST)"
 
 re: fclean all
 
 rebug: fclean debug
 
-.PHONY: all debug clean fclean re rebug
+.PHONY: all debug clean fclean re rebug cleanlib $(NAME) $(GRN) $(RED) $(YEL) $(RST) $(DEL) $(P1SRC)
