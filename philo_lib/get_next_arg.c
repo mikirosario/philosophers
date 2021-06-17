@@ -1,36 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_one.h                                        :+:      :+:    :+:   */
+/*   get_next_arg.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/06/17 23:16:07 by mrosario         ###   ########.fr       */
+/*   Created: 2021/06/17 20:45:12 by mrosario          #+#    #+#             */
+/*   Updated: 2021/06/17 23:28:38 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_ONE_H
-# define PHILO_ONE_H
-
-# include "philo_lib.h"
-# include <stdlib.h>
-# include <string.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <sys/time.h>
-# include <pthread.h>
+#include "philo_lib.h"
 
 /*
-** Exit Functions
+** Retrieves the addresses of all arguments except the first (the program name).
+**
+** When no argument is present, NULL is returned. If all arguments have been
+** passed, it cycles back to the beginning.
 */
 
-void	exit_failure(char *error_msg, t_progdata *progdata);
+char	*get_next_arg(int argc, char **argv)
+{
+	static int	i = 0;
 
-/*
-** Unit Tests
-*/
-
-void	get_args_utest(int argc, char **argv, t_progdata *progdata);
-
-#endif
+	if (i == argc)
+		i = 0;
+	return (argv[++i]);
+}

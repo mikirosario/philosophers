@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
+#    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/06/17 18:10:23 by miki             ###   ########.fr        #
+#    Updated: 2021/06/17 23:16:48 by mrosario         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ P1SRC = ./philo_one/src/
 P2SRC = ./philo_two/src/
 P3SRC = ./philo_three/src/
 
-P1FILES = $(P1SRC)main.c
+P1FILES = $(P1SRC)main.c $(P1SRC)unit_tests.c
 
 PHILO_LIB = ./philo_lib/libphilo.a
 
