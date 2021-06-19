@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 23:04:44 by mrosario          #+#    #+#             */
-/*   Updated: 2021/06/17 23:22:57 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/19 17:56:34 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,6 @@ void	get_args_utest(int argc, char **argv, t_progdata *progdata)
 	i = 0;
 	while ((int)i < argc - 1)
 		if (((int *)(progdata))[i++] != pl_atoi(*++argv))
-			exit_failure("KO: get_args unit test", progdata);
+			exit_failure(RED"KO: get_args unit test"RESET, progdata);
 	printf(GRN"OK: get_args unit test"RESET);
 }

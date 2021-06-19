@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/06/17 22:50:15 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/19 18:25:23 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PHILO_LIB_H
 # include "ansi_color_codes.h"
 # include <stdlib.h>
+# include <pthread.h>
 
 typedef struct s_philosopher
 {
@@ -36,6 +37,9 @@ typedef struct s_progdata
 	int				time_to_sleep;
 	int				number_of_times_each_philosopher_must_eat;
 	t_philosopher	**philosopher;
+	
+	pthread_t		t1;
+	pthread_t		t2;
 }				t_progdata;
 
 char	check_args(char **argv);

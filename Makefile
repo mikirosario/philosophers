@@ -6,7 +6,7 @@
 #    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/06/17 23:16:48 by mrosario         ###   ########.fr        #
+#    Updated: 2021/06/19 18:16:12 by mrosario         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ PHILO_LIB = ./philo_lib/libphilo.a
 
 FLAGS = -Wall -Werror -Wextra
 
-LIBS = -I ./includes -L ./philo_lib/ -lphilo
+LIBS = -I ./includes -L ./philo_lib/ -lphilo -pthread
 
 $(NAME): $(PHILO_LIB) $(P1)
 

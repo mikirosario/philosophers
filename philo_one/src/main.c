@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/06/17 23:31:58 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/19 18:27:40 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,16 @@ void	get_args(int argc, char **argv, t_progdata *progdata)
 	}	
 }
 
+
+void	*test_routine(void *test)
+{
+	(void)test;
+	printf("Test from threads\n");
+	sleep(3);
+	printf("Ending thread\n");
+	return (NULL);
+}
+
 int	main(int argc, char **argv)
 {
 	t_progdata	progdata;
@@ -66,5 +76,11 @@ int	main(int argc, char **argv)
 	//unit test
 	get_args_utest(argc, argv, &progdata);
 	//unit test
+
+	printf("\n");
+	pthread_create(&progdata.t1, NULL, &test_routine, NULL);
+	pthread_create(&progdata.t2, NULL, &test_routine, NULL);
+	pthread_join(progdata.t1, NULL);
+	pthread_join(progdata.t2, NULL);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/06/17 23:16:07 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/19 18:25:18 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <sys/time.h>
-# include <pthread.h>
 
 /*
 ** Exit Functions
