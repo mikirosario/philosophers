@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_lib.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/06/19 18:25:23 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/25 23:00:54 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include "ansi_color_codes.h"
 # include <stdlib.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 typedef struct s_philosopher
 {
@@ -36,17 +37,27 @@ typedef struct s_progdata
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_times_each_philosopher_must_eat;
-	t_philosopher	**philosopher;
+	int				number_of_forks;
+	pthread_t		*thread;
+	pthread_mutex_t	*forks;
+	t_philosopher	*philosopher;
+	pthread_mutex_t idlock;
 	
-	pthread_t		t1;
-	pthread_t		t2;
+	//Tests
+	// pthread_t		t1;
+	// pthread_t		t2;
+	// size_t			mails;
+	// size_t			res;
+	//Tests
 }				t_progdata;
 
-char	check_args(char **argv);
-char	*get_next_arg(int argc, char **argv);
-int		pl_atoi(char const *str);
-int		pl_isdigit(int c);
-void	pl_putstr_fd(char *s, int fd);
-size_t	pl_strlen(char const *s);
+char					check_args(char **argv);
+char					*get_next_arg(int argc, char **argv);
+int						pl_atoi(char const *str);
+int						pl_isdigit(int c);
+void					pl_putstr_fd(char *s, int fd);
+size_t					pl_strlen(char const *s);
+void					*pl_bzero(void *s, size_t n);
+long long unsigned int	pl_msec_diff(struct timeval *t0, struct timeval *t1);
 
 #endif

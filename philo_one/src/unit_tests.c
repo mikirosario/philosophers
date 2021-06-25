@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unit_tests.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 23:04:44 by mrosario          #+#    #+#             */
-/*   Updated: 2021/06/19 17:56:34 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/25 17:48:14 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@ void	get_args_utest(int argc, char **argv, t_progdata *progdata)
 	i = 0;
 	while ((int)i < argc - 1)
 		if (((int *)(progdata))[i++] != pl_atoi(*++argv))
-			exit_failure(RED"KO: get_args unit test"RESET, progdata);
+		{
+			printf(RED"KO: get_args unit test"RESET);
+			exit_program(progdata, EXIT_FAILURE);
+		}
 	printf(GRN"OK: get_args unit test"RESET);
 }

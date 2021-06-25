@@ -3,35 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/06/19 18:27:40 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/25 23:25:55 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_one.h"
 
 /*
-** This function checks and frees all memory reserved during run-time.
+** This function checks and frees all memory reserved during run-time and also
+** destroys all mutexes.
 */
 
 void	freeme(t_progdata *progdata)
 {
-	(void)progdata;
+	if (pthread_mutex_destroy(&progdata->idlock))
+		printf("Failure in pthread_mutex_destroy call on idlock in freeme");
+	while (progdata->number_of_forks--)
+		if (pthread_mutex_destroy(progdata->forks + progdata->number_of_forks))
+			printf("Failure in pthread_mutex_destroy call on forks[%d] in freeme\n", progdata->number_of_forks);
+	if (progdata->thread)
+		free(progdata->thread);
+	if (progdata->forks)
+		free(progdata->forks);
+	if (progdata->philosopher)
+		free(progdata->philosopher);
+	progdata->philosopher = NULL;
 	return ;
 }
 
 /*
-** This function exits with the error message passed as error_msg after freeing
-** all memory.
+** This function exits the program after freeing all dynamically allocated
+** memory with the status passed as exit_status.
 */
 
-void	exit_failure(char *error_msg, t_progdata *progdata)
+void	exit_program(t_progdata *progdata, int exit_status)
 {
-	printf(RED"%s\n"RESET, error_msg);
 	freeme(progdata);
-	exit(EXIT_FAILURE);
+	exit(exit_status);
 }
 
 /*
@@ -54,33 +65,52 @@ void	get_args(int argc, char **argv, t_progdata *progdata)
 }
 
 
-void	*test_routine(void *test)
-{
-	(void)test;
-	printf("Test from threads\n");
-	sleep(3);
-	printf("Ending thread\n");
-	return (NULL);
-}
+// void	*test_routine(void *test)
+// {
+// 	size_t i = 0;
+// 	for ( ; i < 1000000; i++)
+// 	{
+// 	}
+// 	pthread_mutex_lock(&((t_progdata *)test)->mutex);
+// 	((t_progdata *)test)->mails += i;
+// 	pthread_mutex_unlock(&((t_progdata *)test)->mutex);
+// 	printf("Test from threads\n");
+// 	printf("Ending thread\n");
+// 	((t_progdata *)test)->res = i;
+// 	return (&((t_progdata *)test)->res);
+// }
 
 int	main(int argc, char **argv)
 {
 	t_progdata	progdata;
-
-	(void)argv;
+	// void		*res;
+	pl_bzero(&progdata, sizeof(t_progdata));
+	// progdata.mails = 0;
 	if (argc < 5 || argc > 6)
-		exit_failure(RED"Wrong number of arguments"RESET, &progdata);
+		iamerror(ARG_NUM_ERR, "main", &progdata);
 	if (!check_args(argv))
-		exit_failure(RED"Bad arguments"RESET, &progdata);
+		iamerror(ARG_SYN_ERR, "main", &progdata);
 	get_args(argc, argv, &progdata);
 	//unit test
 	get_args_utest(argc, argv, &progdata);
 	//unit test
 
 	printf("\n");
-	pthread_create(&progdata.t1, NULL, &test_routine, NULL);
-	pthread_create(&progdata.t2, NULL, &test_routine, NULL);
-	pthread_join(progdata.t1, NULL);
-	pthread_join(progdata.t2, NULL);
-	return (1);
+
+	progdata.philosopher = philo_init(progdata.number_of_philosophers, &progdata);
+	progdata.thread = thread_init(progdata.number_of_philosophers, &progdata);
+	progdata.forks = fork_init(progdata.number_of_philosophers, &progdata);
+	size_t i = 0;
+	while (i < (size_t)progdata.number_of_philosophers)
+		pthread_join(progdata.thread[i++], NULL);
+
+	// pthread_create(&progdata.t1, NULL, &test_routine, &progdata);
+	// pthread_create(&progdata.t2, NULL, &test_routine, &progdata);
+	// pthread_join(progdata.t1, &res);
+	// printf("Number of mails incremented by thread 1: %zu\n", *(size_t *)res);
+	// pthread_join(progdata.t2, &res);
+	// printf("Number of mails incremented by thread 2: %zu\n", *(size_t *)res);
+	// pthread_mutex_destroy(&progdata.mutex);
+	// printf("Number of mails: %zu\n", progdata.mails);
+	exit_program(&progdata, EXIT_SUCCESS);
 }

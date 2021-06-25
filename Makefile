@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
+#    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/06/19 18:16:12 by mrosario         ###   ########.fr        #
+#    Updated: 2021/06/25 22:41:01 by miki             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,8 @@ P1SRC = ./philo_one/src/
 P2SRC = ./philo_two/src/
 P3SRC = ./philo_three/src/
 
-P1FILES = $(P1SRC)main.c $(P1SRC)unit_tests.c
+P1FILES = $(P1SRC)main.c $(P1SRC)unit_tests.c $(P1SRC)philo_init.c \
+$(P1SRC)iamerror.c $(P1SRC)life_cycle.c
 
 PHILO_LIB = ./philo_lib/libphilo.a
 
@@ -47,9 +48,9 @@ $(PHILO_LIB):
 
 all: $(NAME)
 
-debug:
-	#gcc $(CFLAG) $(P1FILES) -g3 -fsanitize=address -o $(P1) $(LIBS)
-	@gcc $(CFLAG) $(P1FILES) -g -o $(P1) $(LIBS)
+debug: $(PHILO_LIB)
+	#gcc $(FLAGS) $(P1FILES) -g3 -fsanitize=address -o $(P1) $(LIBS)
+	@gcc $(FLAGS) $(P1FILES) -g -o $(P1) $(LIBS)
 
 clean:
 	@printf "$(YEL)Deleting program object files...$(RST)"

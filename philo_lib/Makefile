@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
+#    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/17 16:01:12 by miki              #+#    #+#              #
-#    Updated: 2021/06/17 21:47:17 by mrosario         ###   ########.fr        #
+#    Updated: 2021/06/25 17:04:06 by miki             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ DEL = \e[2K\r
 RST = \e[0m
 
 SRC = ./pl_putstr_fd.c ./pl_strlen.c ./pl_isdigit.c ./pl_atoi.c \
+./pl_msec_diff.c ./pl_bzero.c \
 ./check_args.c ./get_next_arg.c
 
 OBJ = $(SRC:.c=.o)
