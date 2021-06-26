@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/06/25 23:25:55 by miki             ###   ########.fr       */
+/*   Updated: 2021/06/26 15:11:15 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,9 @@
 void	freeme(t_progdata *progdata)
 {
 	if (pthread_mutex_destroy(&progdata->idlock))
-		printf("Failure in pthread_mutex_destroy call on idlock in freeme");
+		printf("Failure in pthread_mutex_destroy call on idlock in freeme\n");
+	if (pthread_mutex_destroy(&progdata->waiter))
+		printf("Failure in pthread_mutex_destroy call on waiter in freeme\n");
 	while (progdata->number_of_forks--)
 		if (pthread_mutex_destroy(progdata->forks + progdata->number_of_forks))
 			printf("Failure in pthread_mutex_destroy call on forks[%d] in freeme\n", progdata->number_of_forks);

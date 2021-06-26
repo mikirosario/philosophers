@@ -6,7 +6,7 @@
 #    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/17 16:01:12 by miki              #+#    #+#              #
-#    Updated: 2021/06/25 17:04:06 by miki             ###   ########.fr        #
+#    Updated: 2021/06/26 14:55:19 by miki             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ DEL = \e[2K\r
 RST = \e[0m
 
 SRC = ./pl_putstr_fd.c ./pl_strlen.c ./pl_isdigit.c ./pl_atoi.c \
-./pl_msec_diff.c ./pl_bzero.c \
+./pl_msec_diff.c ./pl_bzero.c ./pl_timeval_to_msec.c ./pl_get_time_msec.c \
 ./check_args.c ./get_next_arg.c
 
 OBJ = $(SRC:.c=.o)

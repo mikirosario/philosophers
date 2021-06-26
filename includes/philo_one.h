@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/06/25 23:24:40 by miki             ###   ########.fr       */
+/*   Updated: 2021/06/26 15:39:52 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #define ARG_SYN_ERR 3
 #define PTHREAD_CREAT_ERR 4
 #define PTHREAD_MUTEX_INIT_ERR 5
+#define DEATH_TOOK_TOO_LONG 6
 
 /*
 ** Exit Functions
