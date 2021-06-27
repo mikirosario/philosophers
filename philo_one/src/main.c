@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/06/26 15:11:15 by miki             ###   ########.fr       */
+/*   Updated: 2021/06/27 06:24:16 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 void	freeme(t_progdata *progdata)
 {
+	//solo if mutex created
 	if (pthread_mutex_destroy(&progdata->idlock))
 		printf("Failure in pthread_mutex_destroy call on idlock in freeme\n");
 	if (pthread_mutex_destroy(&progdata->waiter))
@@ -63,7 +64,8 @@ void	get_args(int argc, char **argv, t_progdata *progdata)
 	{
 		((int *)(progdata))[i++] = pl_atoi(arg);
 		arg = get_next_arg(argc, argv);
-	}	
+	}
+	progdata->argc = argc;
 }
 
 
@@ -82,6 +84,17 @@ void	get_args(int argc, char **argv, t_progdata *progdata)
 // 	return (&((t_progdata *)test)->res);
 // }
 
+char	hungry_philosophers(t_progdata *progdata)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < (size_t)progdata->number_of_philosophers)
+		if (!is_full(progdata, i++))
+			return (1);
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
 	t_progdata	progdata;
@@ -90,22 +103,42 @@ int	main(int argc, char **argv)
 	// progdata.mails = 0;
 	if (argc < 5 || argc > 6)
 		iamerror(ARG_NUM_ERR, "main", &progdata);
-	if (!check_args(argv))
+	else if (!check_args(argv))
 		iamerror(ARG_SYN_ERR, "main", &progdata);
-	get_args(argc, argv, &progdata);
-	//unit test
-	get_args_utest(argc, argv, &progdata);
-	//unit test
+	else
+		get_args(argc, argv, &progdata);
+	// //unit test
+	// get_args_utest(argc, argv, &progdata);
+	// //unit test
 
 	printf("\n");
-
-	progdata.philosopher = philo_init(progdata.number_of_philosophers, &progdata);
-	progdata.thread = thread_init(progdata.number_of_philosophers, &progdata);
-	progdata.forks = fork_init(progdata.number_of_philosophers, &progdata);
-	size_t i = 0;
-	while (i < (size_t)progdata.number_of_philosophers)
-		pthread_join(progdata.thread[i++], NULL);
-
+	if (!progdata.error)
+		progdata.philosopher = philo_init(progdata.number_of_philosophers, &progdata);
+	if (!progdata.error)
+		progdata.forks = fork_init(progdata.number_of_philosophers, &progdata);
+	if (!progdata.error)
+		progdata.time_start = pl_get_time_msec();
+	if (!progdata.error)
+		progdata.thread = thread_init(progdata.number_of_philosophers, &progdata);
+	if (!progdata.error)
+	{
+		size_t i = 0;
+		while (!(&progdata.philosopher[i])->died && hungry_philosophers(&progdata))
+		{
+			if (++i == (size_t)progdata.number_of_philosophers)
+				i = 0;
+		}
+		//masacre
+		if ((&progdata.philosopher[i])->died)
+		{
+			i = 0;
+			while (i < (size_t)progdata.number_of_philosophers)
+				(&progdata.philosopher[i++])->died = 1;
+		}
+		i = 0;
+		while (i < (size_t)progdata.number_of_philosophers)
+			pthread_join(progdata.thread[i++], NULL);
+	}
 	// pthread_create(&progdata.t1, NULL, &test_routine, &progdata);
 	// pthread_create(&progdata.t2, NULL, &test_routine, &progdata);
 	// pthread_join(progdata.t1, &res);
@@ -114,5 +147,7 @@ int	main(int argc, char **argv)
 	// printf("Number of mails incremented by thread 2: %zu\n", *(size_t *)res);
 	// pthread_mutex_destroy(&progdata.mutex);
 	// printf("Number of mails: %zu\n", progdata.mails);
-	exit_program(&progdata, EXIT_SUCCESS);
+	// exit_program(&progdata, EXIT_SUCCESS);
+	freeme(&progdata);
+	return (0);
 }

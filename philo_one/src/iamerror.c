@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iamerror.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 17:08:32 by miki              #+#    #+#             */
-/*   Updated: 2021/06/26 15:43:28 by miki             ###   ########.fr       */
+/*   Updated: 2021/06/27 05:57:28 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,5 @@ void	iamerror(int error_code, char *error_func, t_progdata *progdata)
 		printf(RED"Failure in pthread_create call in %s\n"RESET, error_func);
 	else if (error_code == PTHREAD_MUTEX_INIT_ERR)
 		printf(RED"Failure in pthread_mutex_init call in %s\n"RESET, error_func);
-	else if (error_code == DEATH_TOOK_TOO_LONG)
-		printf(RED"Took more than 10 ms to inform of philosopher death in %s\n"RESET, error_func);
-	exit_program(progdata, EXIT_FAILURE);
+	progdata->error = 1;
 }

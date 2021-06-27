@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_lib.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/06/26 14:54:56 by miki             ###   ########.fr       */
+/*   Updated: 2021/06/27 05:44:43 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,12 @@
 
 typedef struct s_philosopher
 {
-	char	has_fork : 1;
-	char	is_eating : 1;
-	char	is_sleeping : 1;
-	char	is_thinking : 1;
-	char	died : 1;
+	// char	has_fork : 1;
+	// char	is_eating : 1;
+	// char	is_sleeping : 1;
+	// char	is_thinking : 1;
+	int		times_ate;
+	char	died;
 }				t_philosopher;
 
 typedef struct s_progdata
@@ -34,12 +35,16 @@ typedef struct s_progdata
 	int				time_to_sleep;
 	int				number_of_times_each_philosopher_must_eat;
 	int				number_of_forks;
+	int				argc;
+	int				error;
 	long long int	usec_time_to_eat;
 	long long int	usec_time_to_sleep;
+	long long unsigned int	time_start;
 	pthread_t		*thread;
 	pthread_mutex_t	*forks;
 	t_philosopher	*philosopher;
 	pthread_mutex_t idlock;
+	pthread_mutex_t	printlock;
 	pthread_mutex_t	waiter;
 	
 	//Tests

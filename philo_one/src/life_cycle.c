@@ -3,18 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/06/26 16:05:15 by miki             ###   ########.fr       */
+/*   Updated: 2021/06/27 05:43:38 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_one.h"
 
-void	inform(char *msg, int id)
+void	inform(char *msg, int id, t_progdata *progdata)
 {
-	printf("%llu %d"" %s\n", pl_get_time_msec(), id + 1, msg);
+	pthread_mutex_lock(&progdata->printlock);
+	printf("%llu %d"" %s\n", pl_get_time_msec() - progdata->time_start, id + 1, msg);
+	pthread_mutex_unlock(&progdata->printlock);
+}
+
+char	is_full(t_progdata *progdata, int id)
+{
+	if (progdata->argc == 6 && (&progdata->philosopher[id])->times_ate == \
+	progdata->number_of_times_each_philosopher_must_eat)
+			return (1);
+	return (0);
+}
+
+char	full_check(t_progdata *progdata, int id)
+{
+	if (progdata->argc == 6)
+	{
+		if (is_full(progdata, id))
+			return (1);
+		(&progdata->philosopher[id])->times_ate++;
+	}
+	return (0);
+}
+
+char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
+{
+	long long unsigned int	diff;
+	long long unsigned int	time_of_death;
+
+	diff = (pl_get_time_msec() - ((t_progdata *)progdata)->time_start - *last_meal);
+	if (diff > (long long unsigned int)((t_progdata *)progdata)->time_to_die)
+	{
+		//die
+		time_of_death = pl_get_time_msec();
+		inform(RED"died"RESET, id, progdata);
+		if (pl_get_time_msec() - time_of_death > 10)
+			printf(RED"Took more than 10 ms to inform of philosopher death\n"RESET);
+		(&progdata->philosopher[id])->died = 1;
+	}
+	*last_meal += diff;
+	return ((&progdata->philosopher[id])->died);
 }
 
 void	*life_cycle(void *progdata)
@@ -22,12 +62,11 @@ void	*life_cycle(void *progdata)
 	static int				uid = 0;
 	int						id;
 	long long unsigned int	last_meal;
-	long long unsigned int	diff;
 	int						fork1;
 	int						fork2;
 	//struct timeval	current;
 
-	last_meal = pl_get_time_msec();
+	last_meal =  pl_get_time_msec() - ((t_progdata *)progdata)->time_start;
 	pthread_mutex_lock(&((t_progdata *)progdata)->idlock);
 	id = uid++;
 	pthread_mutex_unlock(&((t_progdata *)progdata)->idlock);
@@ -39,32 +78,33 @@ void	*life_cycle(void *progdata)
 	while(1)
 	{
 		//think
-		inform("is thinking", id);
+		if (is_dead(progdata, &last_meal, id))
+			break ;
+		inform(CYN"is thinking"RESET, id, progdata);
 		pthread_mutex_lock(&((t_progdata *)progdata)->waiter);
 		//take forks
 		pthread_mutex_lock(&((t_progdata *)progdata)->forks[fork1]);
-		inform("has taken a fork", id);
+		inform("has taken a fork", id, progdata);
 		pthread_mutex_lock(&((t_progdata *)progdata)->forks[fork2]);
-		inform("has taken a fork", id);
+		inform("has taken a fork", id, progdata);
 		pthread_mutex_unlock(&((t_progdata *)progdata)->waiter);
 		//eat
-		inform("is eating", id);
-		usleep(((t_progdata *)progdata)->usec_time_to_eat);
-		diff = (pl_get_time_msec() - last_meal);
-		if (diff > (long long unsigned int)((t_progdata *)progdata)->time_to_die)
+		if (is_full(progdata, id) || is_dead(progdata, &last_meal, id))
 		{
-			//die
-			sleep(1);
-			inform("died", id);
-			if (last_meal + diff - pl_get_time_msec() > 10)
-				iamerror(DEATH_TOOK_TOO_LONG, "life_cycle", progdata);
-			exit_program(progdata, EXIT_SUCCESS);
+			pthread_mutex_unlock(&((t_progdata *)progdata)->forks[fork2]);
+			pthread_mutex_unlock(&((t_progdata *)progdata)->forks[fork1]);
+			break ;
 		}
-		last_meal += diff;
+		inform(YEL"is eating"RESET, id, progdata);
+		if (((t_progdata *)progdata)->argc == 6)
+			(&((t_progdata *)progdata)->philosopher[id])->times_ate++;
+		usleep(((t_progdata *)progdata)->usec_time_to_eat);
 		pthread_mutex_unlock(&((t_progdata *)progdata)->forks[fork2]);
 		pthread_mutex_unlock(&((t_progdata *)progdata)->forks[fork1]);
 		//sleep
-		inform("is sleeping", id);
+		if (is_full(progdata, id) || is_dead(progdata, &last_meal, id))
+			break ;
+		inform("is sleeping", id,  progdata);
 		usleep(((t_progdata *)progdata)->usec_time_to_sleep);
 		
 		
@@ -77,7 +117,6 @@ void	*life_cycle(void *progdata)
 		//put down forks
 
 		//sleep
-
 	}
 	return (NULL);
 }

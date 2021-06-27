@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_one.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/06/26 15:39:52 by miki             ###   ########.fr       */
+/*   Updated: 2021/06/27 05:45:49 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 #define ARG_SYN_ERR 3
 #define PTHREAD_CREAT_ERR 4
 #define PTHREAD_MUTEX_INIT_ERR 5
-#define DEATH_TOOK_TOO_LONG 6
 
 /*
 ** Exit Functions
@@ -51,6 +50,7 @@ pthread_mutex_t	*fork_init(int number_of_forks, t_progdata *progdata);
 ** Life Cycle
 */
 
+char	is_full(t_progdata *progdata, int id);
 void	*life_cycle(void *progdata);
 
 #endif
