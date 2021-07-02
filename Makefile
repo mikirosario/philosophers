@@ -6,7 +6,7 @@
 #    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/06/25 22:41:01 by miki             ###   ########.fr        #
+#    Updated: 2021/06/29 19:58:37 by miki             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ P2SRC = ./philo_two/src/
 P3SRC = ./philo_three/src/
 
 P1FILES = $(P1SRC)main.c $(P1SRC)unit_tests.c $(P1SRC)philo_init.c \
-$(P1SRC)iamerror.c $(P1SRC)life_cycle.c
+$(P1SRC)iamerror.c $(P1SRC)life_cycle.c $(P1SRC)setup.c
 
 PHILO_LIB = ./philo_lib/libphilo.a
 

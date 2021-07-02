@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   iamerror.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 17:08:32 by miki              #+#    #+#             */
-/*   Updated: 2021/06/27 05:57:28 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/29 20:00:48 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_one.h"
 
-void	iamerror(int error_code, char *error_func, t_progdata *progdata)
+int	iamerror(int error_code, char *error_func)
 {
 	if (error_code == MALLOC_ERR)
 		printf(RED"Malloc Error in %s\n"RESET, error_func);
@@ -24,5 +24,5 @@ void	iamerror(int error_code, char *error_func, t_progdata *progdata)
 		printf(RED"Failure in pthread_create call in %s\n"RESET, error_func);
 	else if (error_code == PTHREAD_MUTEX_INIT_ERR)
 		printf(RED"Failure in pthread_mutex_init call in %s\n"RESET, error_func);
-	progdata->error = 1;
+	return (0);
 }

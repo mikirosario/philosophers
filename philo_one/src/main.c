@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/06/27 06:24:16 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/06/29 20:03:15 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,26 +48,6 @@ void	exit_program(t_progdata *progdata, int exit_status)
 	exit(exit_status);
 }
 
-/*
-** This function retrieves all the arguments (except the first) from the
-** argument array and converts them into integers in the progdata struct.
-*/
-
-void	get_args(int argc, char **argv, t_progdata *progdata)
-{
-	char	*arg;
-	size_t	i;
-
-	i = 0;
-	arg = get_next_arg(argc, argv);
-	while (arg)
-	{
-		((int *)(progdata))[i++] = pl_atoi(arg);
-		arg = get_next_arg(argc, argv);
-	}
-	progdata->argc = argc;
-}
-
 
 // void	*test_routine(void *test)
 // {
@@ -98,29 +78,14 @@ char	hungry_philosophers(t_progdata *progdata)
 int	main(int argc, char **argv)
 {
 	t_progdata	progdata;
-	// void		*res;
+
 	pl_bzero(&progdata, sizeof(t_progdata));
-	// progdata.mails = 0;
-	if (argc < 5 || argc > 6)
-		iamerror(ARG_NUM_ERR, "main", &progdata);
-	else if (!check_args(argv))
-		iamerror(ARG_SYN_ERR, "main", &progdata);
-	else
-		get_args(argc, argv, &progdata);
 	// //unit test
 	// get_args_utest(argc, argv, &progdata);
 	// //unit test
 
 	printf("\n");
-	if (!progdata.error)
-		progdata.philosopher = philo_init(progdata.number_of_philosophers, &progdata);
-	if (!progdata.error)
-		progdata.forks = fork_init(progdata.number_of_philosophers, &progdata);
-	if (!progdata.error)
-		progdata.time_start = pl_get_time_msec();
-	if (!progdata.error)
-		progdata.thread = thread_init(progdata.number_of_philosophers, &progdata);
-	if (!progdata.error)
+	if (setup(&progdata, argc, argv))
 	{
 		size_t i = 0;
 		while (!(&progdata.philosopher[i])->died && hungry_philosophers(&progdata))
