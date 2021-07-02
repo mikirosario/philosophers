@@ -3,14 +3,14 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
+#    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/06/29 19:58:37 by miki             ###   ########.fr        #
+#    Updated: 2021/07/02 14:27:15 by mrosario         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = philosophers
+NAME = philo
 
 GRN = \e[1;32m
 RED = \e[1;31m
@@ -18,13 +18,9 @@ YEL = \e[1;33m
 DEL = \e[2K\r
 RST = \e[0m
 
-P1 = ./philo_one/philo_one
-P2 = ./philo_two/philo_two
-P3 = ./philo_three/philo_three
+P1 = ./philo/philo
 
-P1SRC = ./philo_one/src/
-P2SRC = ./philo_two/src/
-P3SRC = ./philo_three/src/
+P1SRC = ./philo/src/
 
 P1FILES = $(P1SRC)main.c $(P1SRC)unit_tests.c $(P1SRC)philo_init.c \
 $(P1SRC)iamerror.c $(P1SRC)life_cycle.c $(P1SRC)setup.c
