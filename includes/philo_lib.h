@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/06/27 05:44:43 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/02 20:04:55 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,11 @@
 
 typedef struct s_philosopher
 {
-	// char	has_fork : 1;
-	// char	is_eating : 1;
-	// char	is_sleeping : 1;
-	// char	is_thinking : 1;
-	int		times_ate;
-	char	died;
+	long long unsigned int	last_meal;
+	int						fork1;
+	int						fork2;
+	int						times_ate;
+	char					died;
 }				t_philosopher;
 
 typedef struct s_progdata
@@ -39,13 +38,15 @@ typedef struct s_progdata
 	int				error;
 	long long int	usec_time_to_eat;
 	long long int	usec_time_to_sleep;
+	long long int	usec_time_to_die;
 	long long unsigned int	time_start;
 	pthread_t		*thread;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	*waiter;
 	t_philosopher	*philosopher;
 	pthread_mutex_t idlock;
 	pthread_mutex_t	printlock;
-	pthread_mutex_t	waiter;
+	//pthread_mutex_t	waiter;
 	
 	//Tests
 	// pthread_t		t1;
