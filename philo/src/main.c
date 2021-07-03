@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/02 18:25:30 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/03 20:32:12 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,10 @@
 
 void	freeme(t_progdata *progdata)
 {
-	int	mutexc;
-
-	mutexc = progdata->number_of_philosophers;
-	//solo if mutex created
 	if (pthread_mutex_destroy(&progdata->idlock))
 		printf("Failure in pthread_mutex_destroy call on idlock in freeme\n");
-	// if (pthread_mutex_destroy(&progdata->waiter))
-	// 	printf("Failure in pthread_mutex_destroy call on waiter in freeme\n");
-	while (mutexc--)
-		if (pthread_mutex_destroy(progdata->waiter + mutexc))
-			printf("Failure in pthread_mutex_destroy call on waiter[%d] in freeme\n", mutexc);
+	if (pthread_mutex_destroy(&progdata->waiter))
+		printf("Failure in pthread_mutex_destroy call on waiter in freeme\n");
 	while (progdata->number_of_forks--)
 		if (pthread_mutex_destroy(progdata->forks + progdata->number_of_forks))
 			printf("Failure in pthread_mutex_destroy call on forks[%d] in freeme\n", progdata->number_of_forks);

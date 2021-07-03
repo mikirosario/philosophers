@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/02 15:26:25 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/03 20:22:29 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,18 @@
 
 int	waiter_init(int number_of_philosophers, t_progdata *progdata)
 {
-	int	i;
+	// int	i;
 
-	i = 0;
-	progdata->waiter = malloc(number_of_philosophers * sizeof(pthread_mutex_t));
-	if (progdata->waiter == NULL)
-		return (iamerror(MALLOC_ERR, "waiter_init"));
-	while (i < number_of_philosophers)
-		if (pthread_mutex_init(&progdata->waiter[i++], NULL))
-			return (iamerror(PTHREAD_MUTEX_INIT_ERR, "waiter_init"));
+	// i = 0;
+	// progdata->waiter = malloc(number_of_philosophers * sizeof(pthread_mutex_t));
+	// if (progdata->waiter == NULL)
+	// 	return (iamerror(MALLOC_ERR, "waiter_init"));
+	// while (i < number_of_philosophers)
+	// 	if (pthread_mutex_init(&progdata->waiter[i++], NULL))
+	// 		return (iamerror(PTHREAD_MUTEX_INIT_ERR, "waiter_init"));
+	(void)number_of_philosophers;
+	if (pthread_mutex_init(&progdata->waiter, NULL))
+		return (iamerror(PTHREAD_MUTEX_INIT_ERR, "waiter_init"));
 	return (1);
 }
 

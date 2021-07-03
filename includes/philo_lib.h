@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/02 20:04:55 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/04 00:50:46 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ typedef struct s_philosopher
 	int						fork2;
 	int						times_ate;
 	char					died;
+	char					eating;
 }				t_philosopher;
 
 typedef struct s_progdata
@@ -42,11 +43,11 @@ typedef struct s_progdata
 	long long unsigned int	time_start;
 	pthread_t		*thread;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	*waiter;
+	//pthread_mutex_t	*waiter;
 	t_philosopher	*philosopher;
 	pthread_mutex_t idlock;
 	pthread_mutex_t	printlock;
-	//pthread_mutex_t	waiter;
+	pthread_mutex_t	waiter;
 	
 	//Tests
 	// pthread_t		t1;
@@ -65,6 +66,7 @@ size_t					pl_strlen(char const *s);
 void					*pl_bzero(void *s, size_t n);
 long long unsigned int	pl_msec_diff(struct timeval *t0, struct timeval *t1);
 long long unsigned int	pl_timeval_to_msec(struct timeval *time);
+long long unsigned int	pl_timeval_to_usec(struct timeval *time);
 long long unsigned int	pl_get_time_msec(void);
 
 #endif
