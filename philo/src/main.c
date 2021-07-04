@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/03 20:32:12 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/04 03:42:55 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 /*
 ** This function checks and frees all memory reserved during run-time and also
-** destroys all mutexes.
+** destroys all mutexes. We print error messages if any mutex destroys fail.
+**
+** Note that beautiful, norminette-friendly style. ;)
 */
 
 void	freeme(t_progdata *progdata)
@@ -25,7 +27,9 @@ void	freeme(t_progdata *progdata)
 		printf("Failure in pthread_mutex_destroy call on waiter in freeme\n");
 	while (progdata->number_of_forks--)
 		if (pthread_mutex_destroy(progdata->forks + progdata->number_of_forks))
-			printf("Failure in pthread_mutex_destroy call on forks[%d] in freeme\n", progdata->number_of_forks);
+			printf \
+			("Failure in pthread_mutex_destroy call on forks[%d] in freeme\n", \
+			progdata->number_of_forks);
 	if (progdata->thread)
 		free(progdata->thread);
 	if (progdata->forks)
@@ -35,33 +39,17 @@ void	freeme(t_progdata *progdata)
 	progdata->philosopher = NULL;
 	return ;
 }
-
 /*
-** This function exits the program after freeing all dynamically allocated
-** memory with the status passed as exit_status.
+** This function will return 1 if ANY philosophers are not full, meaning have
+** not eaten at least number_of_times_a_philosopher_must_eat.
+**
+** If ALL philosophers are full, we return 0 to indicate there are no hungry
+** philosophers left.
+**
+** The is_full function always returns false (aka. hungry) if no argument was
+** passed for number_of_times_a_philosopher_must_eat. Thus, this function will
+** also always return 0 in that case.
 */
-
-void	exit_program(t_progdata *progdata, int exit_status)
-{
-	freeme(progdata);
-	exit(exit_status);
-}
-
-
-// void	*test_routine(void *test)
-// {
-// 	size_t i = 0;
-// 	for ( ; i < 1000000; i++)
-// 	{
-// 	}
-// 	pthread_mutex_lock(&((t_progdata *)test)->mutex);
-// 	((t_progdata *)test)->mails += i;
-// 	pthread_mutex_unlock(&((t_progdata *)test)->mutex);
-// 	printf("Test from threads\n");
-// 	printf("Ending thread\n");
-// 	((t_progdata *)test)->res = i;
-// 	return (&((t_progdata *)test)->res);
-// }
 
 char	hungry_philosophers(t_progdata *progdata)
 {
@@ -73,6 +61,21 @@ char	hungry_philosophers(t_progdata *progdata)
 			return (1);
 	return (0);
 }
+
+/*
+** First we zero the progdata struct. Then we run setup. If it fails, it will
+** be sure to complain to the user about it. If it succeeds, then the threads
+** are all running!
+**
+** We wait for either the death of any philosopher or for all philosophers to be
+** full. If any philosopher dies, all are sacrificed to the gods via the hemlock
+** function.
+**
+** If all philosophers are dead or full, then they all close their threads. So
+** now we can use pthread_join to reclaim the resources.
+**
+** Then we do freeme to free dynamically allocated memory.
+*/
 
 int	main(int argc, char **argv)
 {
@@ -103,15 +106,6 @@ int	main(int argc, char **argv)
 		while (i < (size_t)progdata.number_of_philosophers)
 			pthread_join(progdata.thread[i++], NULL);
 	}
-	// pthread_create(&progdata.t1, NULL, &test_routine, &progdata);
-	// pthread_create(&progdata.t2, NULL, &test_routine, &progdata);
-	// pthread_join(progdata.t1, &res);
-	// printf("Number of mails incremented by thread 1: %zu\n", *(size_t *)res);
-	// pthread_join(progdata.t2, &res);
-	// printf("Number of mails incremented by thread 2: %zu\n", *(size_t *)res);
-	// pthread_mutex_destroy(&progdata.mutex);
-	// printf("Number of mails: %zu\n", progdata.mails);
-	// exit_program(&progdata, EXIT_SUCCESS);
 	freeme(&progdata);
 	return (0);
 }

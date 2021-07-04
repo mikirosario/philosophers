@@ -1,26 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pl_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   pl_usleep.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/17 15:53:23 by miki              #+#    #+#             */
-/*   Updated: 2021/07/04 03:17:01 by mrosario         ###   ########.fr       */
+/*   Created: 2021/07/04 01:56:58 by mrosario          #+#    #+#             */
+/*   Updated: 2021/07/04 01:57:09 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_lib.h"
-#include <unistd.h>
 
-/*
-** This function is meant to be a very fast putstr to stay under the 10 ms
-** limit. I'll trot out my ASM version of strlen if I have to... ;)
-*/
-
-void	pl_putstr_fd(char *s, int fd)
+void	pl_usleep(long long unsigned int wait)
 {
-	if (!s)
-		return ;
-	write(fd, s, pl_strlen(s));
+	struct timeval			timestamp;
+	long long unsigned int	time_end;
+
+	gettimeofday(&timestamp, NULL);
+	time_end = pl_timeval_to_usec(&timestamp) + wait;
+	while (!gettimeofday(&timestamp, NULL) && \
+	(pl_timeval_to_usec(&timestamp) < time_end))
+		usleep(50);
 }

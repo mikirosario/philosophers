@@ -6,7 +6,7 @@
 #    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/07/02 14:27:15 by mrosario         ###   ########.fr        #
+#    Updated: 2021/07/04 02:45:05 by mrosario         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,8 @@ P1 = ./philo/philo
 P1SRC = ./philo/src/
 
 P1FILES = $(P1SRC)main.c $(P1SRC)unit_tests.c $(P1SRC)philo_init.c \
-$(P1SRC)iamerror.c $(P1SRC)life_cycle.c $(P1SRC)setup.c
+$(P1SRC)iamerror.c $(P1SRC)life_cycle.c $(P1SRC)self_identification.c \
+$(P1SRC)is_functions.c $(P1SRC)inform.c $(P1SRC)setup.c
 
 PHILO_LIB = ./philo_lib/libphilo.a
 

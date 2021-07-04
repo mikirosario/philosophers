@@ -6,60 +6,11 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/04 01:38:50 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/04 03:28:47 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	pl_usleep(long long unsigned int wait)
-{
-	struct timeval			timestamp;
-	long long unsigned int	time_end;
-
-	gettimeofday(&timestamp, NULL);
-	time_end = pl_timeval_to_usec(&timestamp) + wait;
-	while (!gettimeofday(&timestamp, NULL) && \
-	(pl_timeval_to_usec(&timestamp) < time_end))
-		usleep(50);
-}
-
-void	inform(char *msg, int id, t_progdata *progdata)
-{
-	pthread_mutex_lock(&progdata->printlock);
-	printf("%llu %d"" %s\n", pl_get_time_msec() - progdata->time_start, \
-	id + 1, msg);
-	pthread_mutex_unlock(&progdata->printlock);
-}
-
-char	is_full(t_progdata *progdata, int id)
-{
-	if (progdata->argc == 6 && (&progdata->philosopher[id])->times_ate == \
-	progdata->number_of_times_each_philosopher_must_eat)
-			return (1);
-	return (0);
-}
-
-char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
-{
-	long long unsigned int	diff;
-	long long unsigned int	time_of_death;
-
-	diff = pl_get_time_msec() - progdata->time_start - *last_meal;
-	if (diff > (long long unsigned int)progdata->time_to_die ||
-	(&progdata->philosopher[id])->died)
-	{
-		//die
-		time_of_death = pl_get_time_msec();
-		inform(RED"died"RESET, id, progdata);
-		if (pl_get_time_msec() - time_of_death > 10)
-			printf(RED"Took more than 10 ms to inform of philosopher death\n"RESET);
-		(&progdata->philosopher[id])->died = 1;
-	}
-	if (progdata->philosopher[id].eating)
-		*last_meal += diff;
-	return ((&progdata->philosopher[id])->died);
-}
 
 /*
 ** This function checks whether there is only one philosopher. If there is only
@@ -71,9 +22,15 @@ char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
 ** time_to_sleep, otherwise sometimes the is_dead instructions are executed so
 ** quickly that the philosopher survives and the program hangs waiting for its
 ** termination.
+**
+** If there is more than one philosopher we immediately return 0. Otherwise, we
+** wait time_to_die milliseconds, we run is_dead, which will confirm and
+** register the philosopher's death, informing the main function of it so it can
+** kill the other philosophers. Then we return 1.
 */
 
-char	one_philosopher(int id, long long unsigned int *last_meal, t_progdata *progdata)
+char	one_philosopher(int id, long long unsigned int *last_meal, \
+t_progdata *progdata)
 {
 	int	fork1;
 	int	fork2;
@@ -84,42 +41,33 @@ char	one_philosopher(int id, long long unsigned int *last_meal, t_progdata *prog
 		return (0);
 	pl_usleep(progdata->usec_time_to_die + 1000);
 	is_dead(progdata, last_meal, id);
-	pthread_mutex_unlock(&progdata->forks[fork1]);
-	// pthread_mutex_unlock(&progdata->waiter[fork1]);
-	pthread_mutex_unlock(&progdata->waiter);
 	return (1);
 }
 
+/*
+** This function simply unlocks the philosopher's forks. If an unlock fails, we
+** notify the user.
+**
+** The redundant printfs are brought to you by norminette.
+*/
+
 void	unlock_forks(int fork1, int fork2, t_progdata *progdata)
 {
-		if (pthread_mutex_unlock(&progdata->forks[fork2]))
-			printf("Failure in pthread_mutex_unlock call on waiter[%d] in unlock_forks\n", fork2);
-		if (pthread_mutex_unlock(&progdata->forks[fork1]))
-			printf("Failure in pthread_mutex_unlock call on waiter[%d] in unlock_forks\n", fork1);
-}
-
-int	identify_self(t_progdata *progdata)
-{
-	static int	uid = 0;
-	int			id;
-
-	pthread_mutex_lock(&progdata->idlock);
-	id = uid++;
-	pthread_mutex_unlock(&progdata->idlock);
-	return (id);
-}
-
-static void	initialize(int id, t_progdata *progdata)
-{
-	if (id < (progdata->number_of_philosophers - 1))
+	if (pthread_mutex_unlock(&progdata->forks[fork2]))
 	{
-		(progdata->philosopher[id]).fork1 = id;
-		(progdata->philosopher[id]).fork2 = id + 1;
+		pthread_mutex_lock(&progdata->printlock);
+		printf(RED);
+		printf("Failed pthread_mutex_unlock(fork[%d]) in unlock_forks\n", fork2);
+		printf(RESET);
+		pthread_mutex_unlock(&progdata->printlock);
 	}
-	else
+	if (pthread_mutex_unlock(&progdata->forks[fork1]))
 	{
-		(progdata->philosopher[id]).fork1 = 0;
-		(progdata->philosopher[id]).fork2 = id;
+		pthread_mutex_lock(&progdata->printlock);
+		printf(RED);
+		printf("Failed pthread_mutex_unlock(fork[%d]) in unlock_forks\n", fork1);
+		printf(RESET);
+		pthread_mutex_unlock(&progdata->printlock);
 	}
 }
 
@@ -158,8 +106,8 @@ static void	initialize(int id, t_progdata *progdata)
 **					|->fork2 f3	ARISTOTLE f2 fork2<----|
 **							fork2<-|2|->fork1
 **
+** If the philosopher successfully thinks, we return 1.
 */
-
 
 char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 {
@@ -169,7 +117,7 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	fork1 = (progdata->philosopher[id]).fork1;
 	fork2 = (progdata->philosopher[id]).fork2;
 	if (is_dead(progdata, last_meal, id))
-		return(0);
+		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
 	// pthread_mutex_lock(&((t_progdata *)progdata)->waiter);
 	if (one_philosopher(id, last_meal, progdata))
@@ -183,31 +131,26 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	return (1);
 }
 
-// char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
-// {
-// 	int	fork1;
-// 	int	fork2;
-
-// 	fork1 = (progdata->philosopher[id]).fork1;
-// 	fork2 = (progdata->philosopher[id]).fork2;
-// 	if (is_dead(progdata, last_meal, id))
-// 		return(0);
-// 	inform(CYN"is thinking"RESET, id, progdata);
-// 	pthread_mutex_lock(&((t_progdata *)progdata)->waiter[fork1]);
-// 	if (one_philosopher(id, last_meal, progdata))
-// 		return (0);
-// 	pthread_mutex_lock(&((t_progdata *)progdata)->waiter[fork2]);
-// 	//take forks
-// 	pthread_mutex_lock(&((t_progdata *)progdata)->forks[fork1]);
-// 	inform("has taken a fork", id, progdata);
-// 	pthread_mutex_lock(&((t_progdata *)progdata)->forks[fork2]);
-// 	inform("has taken a fork", id, progdata);
-// 	pthread_mutex_unlock(&((t_progdata *)progdata)->waiter[fork2]);
-// 	pthread_mutex_unlock(&((t_progdata *)progdata)->waiter[fork1]);
-// 	return (1);
-// }
-
-
+/*
+** This function performs the eating tasks of a philosophers. First we set the
+** philosopher status to eating. Then we check if it is full. A philosopher is
+** full if it has eaten number_of_times_a_philosopher_must_eat times. If no
+** argument was passed for that, is_full returns 0. Then we check if the
+** philosopher is dead. A philosopher is dead if the time since its last meal
+** is greater than the time_to_die. If the philosopher is not dead, and it is
+** eating, the time_to_die is also reset here.
+**
+** If a philosopher is full or is dead, its forks are unlocked and we return 0.
+**
+** Otherwise, we inform that it is eating. If a sixth argument was provided, we
+** increment the times_ate variable for the philosopher.
+**
+** Then the philosopher waits for time_to_eat milliseconds.
+**
+** Then the philosopher unlocks its forks.
+**
+** If the philosopher successfully eats, we return 1.
+*/
 
 char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 {
@@ -230,6 +173,7 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	unlock_forks(fork1, fork2, progdata);
 	return (1);
 }
+
 /*
 ** The basic life cycle of a philosopher. First we want to initialize the
 ** philosopher. Since we pass our struct pointer as void, to avoid having to
@@ -300,9 +244,9 @@ void	*life_cycle(void *progdata)
 	long long unsigned int	last_meal;
 
 	pdata = ((t_progdata *)progdata);
-	last_meal = pl_get_time_msec() - pdata->time_start;
+	last_meal = pl_get_time_msec();
 	id = identify_self(progdata);
-	initialize(id, progdata);
+	identify_forks(id, progdata);
 	while(1)
 	{
 		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
