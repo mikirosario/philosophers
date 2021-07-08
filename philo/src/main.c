@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/04 03:42:55 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/07 21:49:35 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,24 @@ char	hungry_philosophers(t_progdata *progdata)
 	return (0);
 }
 
+void	hemlock(t_progdata *progdata)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < (size_t)progdata->number_of_philosophers)
+		(&progdata->philosopher[i++])->murdered = 1;
+}
+
+void	tjoin(t_progdata *progdata)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < (size_t)progdata->number_of_philosophers)
+		pthread_join(progdata->thread[i++], NULL);
+}
+
 /*
 ** First we zero the progdata struct. Then we run setup. If it fails, it will
 ** be sure to complain to the user about it. If it succeeds, then the threads
@@ -91,20 +109,11 @@ int	main(int argc, char **argv)
 	{
 		size_t i = 0;
 		while (!(&progdata.philosopher[i])->died && hungry_philosophers(&progdata))
-		{
 			if (++i == (size_t)progdata.number_of_philosophers)
 				i = 0;
-		}
-		//masacre
 		if ((&progdata.philosopher[i])->died)
-		{
-			i = 0;
-			while (i < (size_t)progdata.number_of_philosophers)
-				(&progdata.philosopher[i++])->died = 1;
-		}
-		i = 0;
-		while (i < (size_t)progdata.number_of_philosophers)
-			pthread_join(progdata.thread[i++], NULL);
+			hemlock(&progdata);
+		tjoin(&progdata);
 	}
 	freeme(&progdata);
 	return (0);

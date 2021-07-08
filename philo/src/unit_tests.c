@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unit_tests.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 23:04:44 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/02 14:28:46 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/07 21:01:57 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 ** were properly caught.
 */
 
-void	get_args_utest(int argc, char **argv, t_progdata *progdata)
+char	get_args_utest(int argc, char **argv, t_progdata *progdata)
 {
 	size_t	i;
 
@@ -28,7 +28,8 @@ void	get_args_utest(int argc, char **argv, t_progdata *progdata)
 		if (((int *)(progdata))[i++] != pl_atoi(*++argv))
 		{
 			printf(RED"KO: get_args unit test"RESET);
-			exit_program(progdata, EXIT_FAILURE);
+			return (0);
 		}
 	printf(GRN"OK: get_args unit test"RESET);
+	return (1);
 }

@@ -3,14 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
+#    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/07/04 02:45:05 by mrosario         ###   ########.fr        #
+#    Updated: 2021/07/07 22:01:32 by miki             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
+
+BONUS = philo_bonus
 
 GRN = \e[1;32m
 RED = \e[1;31m
@@ -18,13 +20,19 @@ YEL = \e[1;33m
 DEL = \e[2K\r
 RST = \e[0m
 
-P1 = ./philo/philo
+P1 = ./$(NAME)/$(NAME)
 
-P1SRC = ./philo/src/
+PB = ./$(BONUS)/$(BONUS)
+
+P1SRC = ./$(NAME)/src/
+
+PBSRC = ./$(BONUS)/src/
 
 P1FILES = $(P1SRC)main.c $(P1SRC)unit_tests.c $(P1SRC)philo_init.c \
 $(P1SRC)iamerror.c $(P1SRC)life_cycle.c $(P1SRC)self_identification.c \
 $(P1SRC)is_functions.c $(P1SRC)inform.c $(P1SRC)setup.c
+
+PBFILES = $(PBSRC)main.c
 
 PHILO_LIB = ./philo_lib/libphilo.a
 
@@ -34,10 +42,17 @@ LIBS = -I ./includes -L ./philo_lib/ -lphilo -pthread
 
 $(NAME): $(PHILO_LIB) $(P1)
 
+$(BONUS): $(PHILO_LIB) $(PB)
+
 $(P1):
 	@printf "$(YEL)Compiling program...$(RST)"
 	@gcc $(FLAGS) $(P1FILES) -o $(P1) $(LIBS)
 	@printf "$(DEL)$(GRN)Compiled program\n$(RST)"
+
+$(PB):
+	@printf "$(YEL)Compiling bonus program...$(RST)"
+	@gcc $(FLAGS) $(PBFILES) -o $(PB) $(LIBS)
+	@printf "$(DEL)$(GRN)Compiled bonus program\n$(RST)"
 
 $(PHILO_LIB):
 	@make --no-print-directory -C ./philo_lib

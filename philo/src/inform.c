@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   inform.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:43:36 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/04 02:43:58 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/07 21:45:53 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,19 @@
 ** subtract the time_start from the timestamp before printing to ensure that the
 ** simulation start time is the zero time. We add 1 to the philosopher id to
 ** transform from array position to count.
+**
+** This function will now only inform on a philosopher's status if it is alive
+** or if it died of starvation, not if the main function murdered it via the
+** hemlock function. We do this by checking the murdered flag. (May remove this)
 */
 
 void	inform(char *msg, int id, t_progdata *progdata)
 {
-	pthread_mutex_lock(&progdata->printlock);
-	printf("%llu %d"" %s\n", pl_get_time_msec() - progdata->time_start, \
-	id + 1, msg);
-	pthread_mutex_unlock(&progdata->printlock);
+	// if (!(&progdata->philosopher[id])->murdered)
+	// {
+		pthread_mutex_lock(&progdata->printlock);
+		printf("%llu %d"" %s\n", pl_get_time_msec() - progdata->time_start, \
+		id + 1, msg);
+		pthread_mutex_unlock(&progdata->printlock);
+	// }
 }

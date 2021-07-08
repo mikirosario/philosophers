@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/04 03:34:03 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/07 21:02:15 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int		iamerror(int error_code, char *error_func);
 ** Unit Tests
 */
 
-void	get_args_utest(int argc, char **argv, t_progdata *progdata);
+char	get_args_utest(int argc, char **argv, t_progdata *progdata);
 
 /*
 ** Initialization

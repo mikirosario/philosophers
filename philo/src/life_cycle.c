@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/04 03:28:47 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/07 21:44:48 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 }
 
 /*
-** This function performs the eating tasks of a philosophers. First we set the
+** This function performs the eating tasks of a philosopher. First we set the
 ** philosopher status to eating. Then we check if it is full. A philosopher is
 ** full if it has eaten number_of_times_a_philosopher_must_eat times. If no
 ** argument was passed for that, is_full returns 0. Then we check if the
@@ -252,7 +252,7 @@ void	*life_cycle(void *progdata)
 		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
 		|| is_full(progdata, id) || is_dead(progdata, &last_meal, id))
 			break ;
-		inform(MAG"is sleeping"RESET, id,  progdata);
+		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->usec_time_to_sleep);
 	}
 	return (NULL);
