@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 09:43:51 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/09 10:44:07 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,18 @@
 #include <sys/stat.h>
 
 /*
-** This function initializes the waiters.
+** This function opens the waiter semaphore. The waiter semaphore controls
+** philosopher access to forks. Each philosopher needs 2 forks to eat. Thus,
+** there are always number_of_forks / 2 waiters. That is to say, for every pair
+** of forks there is 1 waiter. In order to be allowed to take forks from the
+** pile, philosophers need the permission of a waiter. Once they get the
+** permission of a waiter they will hold that waiter's "attention" until they
+** put their forks down. If less than 2 forks are left in the pile, then all
+** waiters will be occupied and any hungry philosophers will have to wait for
+** another philosopher to put their forks down to get a waiter's attention.
 **
-** Waiters are mutexes and there are as many waiters as philosophers. Each
-** waiter watches over the philosopher equal to their array position. For
-** example, waiter[pos] watches over philosopher[pos], etc.
-**
-** Waiters control access to the forks to the left and right of each
-** philosopher, that is, fork[pos] and fork[pos + 1]. Each fork will have as
-** many as two waiters assigned. Both waiters must give their permission to
-** the dining philosopher for them to pick up their forks and begin eating.
-**
-** If a neighbouring philosopher is dining, the thinking philosopher will
-** need to wait for that neighbour's waiter to become available again before
-** taking a fork. This ensures all philosophers eat, as that recently fed
-** philosopher then has to wait for its neighbour's waiter, etc.
+** If the sem_open function fails, an appropriate error message is displayed
+** and 0 is returned. Otherwise, 1 is returned. 
 */
 
 int	waiter_init(int	number_of_forks, t_progdata *progdata)
@@ -41,30 +38,13 @@ int	waiter_init(int	number_of_forks, t_progdata *progdata)
 }
 
 /*
-** This function initializes fork-related variables. Forks as in the eating
-** utensil used by the philosophers, not the process spawning function. xD
+** This function opens the semaphore that represents the pile of forks in the
+** middle of the table. So basically it's just a semaphore initialized to
+** nuimber_of_forks. We name it /forksem. The address is saved at
+** progdata->forksem.
 **
-** Forks are mutexes and there are as many as there are philosophers, and they
-** are considered to be located to the left and right of each philosopher, with
-** the philosophers seated in a circular arrangement.
-**
-** We will represent this as an array of N forks corresponding to an array of
-** N philosophers, where fork[id] corresponds to the fork to the left of
-** philosopher[id] and fork[id + 1] corresponds to the fork to the right of
-** philosopher[id], and fork[N] wraps around to fork[0].
-**
-** So this function takes as its arguments the number_of_forks and a pointer to
-** the progdata struct. First we malloc enough memory for an array of N mutexes.
-** If this goes well we initialize each mutex in the array and simultaneously
-** use the variable in the progdata struct that records the number_of_forks as a
-** counter so it will also be set to the proper value after initialization. If
-** any of the mutex_init calls fails, then the progdata->number_of_forks
-** variable will record the position of the last initialized mutex in the array,
-** which can then be used to destroy only the initialized mutexes.
-**
-** If any initialization fails, 0 is returned and an appropriate error message
-** is displayed. Otherwise, 1 is returned.
-**
+** If the sem_open function fails, an appropriate error message is displayed
+** and 0 is returned. Otherwise, 1 is returned.
 */
 
 int	fork_init(int number_of_forks, t_progdata *progdata)
@@ -76,17 +56,26 @@ int	fork_init(int number_of_forks, t_progdata *progdata)
 }
 
 /*
-** This function reserves memory for an array of number_of_philosophers (N)
-** thread pointers, to set up the threads that will function as the
-** 'philosophers'.
+** This function spawns all the child processes. First we initialize time by
+** getting a timestamp, which we save at time_start. We'll subtract this from
+** future time_stamps to get the relative times for all processes, so this time
+** counts as the "simulation start".
 **
-** If successful, the threads are created one by one and their identifiers are
-** pointed to by the array. Threads are destroyed on program exit. A timestamp
-** is also collected at simulation start, just before the first thread is
-** spawned, to serve as the 0 time.
+** For each philosopher we fork a new process in the while. Child processes
+** break away from the while and start their new lives by calling the life_cycle
+** function. Failed forks cause the parent process to break from the while and
+** display an error message before returning 0. We also increment the bonus_uid
+** int between fork calls, which will allow each process to identify itself.
 **
-** If any initialization fails, an appropriate error message is displayed and 0
-** is returned. Otherwise, 1 is returned.
+** Do not confuse the fork function with the forks on the table... two
+** completely different concepts. xD
+**
+** If all philosophers are successfully forked into child processes we leave the
+** while with the pid of the last child. I might save the pids in an array or
+** something, but I haven't really seen the need. Since we're allowed exit for
+** this project, I just have the processes kill themselves as needed.
+**
+** Child processes will continue in life_cycle. Parent process will return.
 */
 
 int	proc_init(int number_of_philosophers, t_progdata *progdata)
@@ -108,33 +97,22 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 	return (1);
 }
 
-// int	thread_init(int number_of_philosophers, t_progdata *progdata)
-// {
-// 	size_t		i;
-
-// 	progdata->thread = malloc(number_of_philosophers * sizeof(pthread_t *));
-// 	if (progdata->thread == NULL)
-// 		return (iamerror(MALLOC_ERR, "thread_init"));
-// 	i = 0;
-// 	progdata->time_start = pl_get_time_msec();
-// 	while (i < (size_t)number_of_philosophers)
-// 		if (pthread_create(&progdata->thread[i++], NULL, life_cycle, progdata))
-// 			return (iamerror(PTHREAD_CREAT_ERR, "thread_init"));
-// 	return (1);
-// }
-
 /*
+** PHILOSOPHER STRUCT ARRAY NOT NEEDED FOR BONUS; REMOVE!
 ** This function reserves memory for an array of t_philosopher structs
 ** corresponding to each philosopher, which will be used to store the particular
 ** status of each philosopher. They are zeroed upon creation.
+** PHILOSOPHER STRUCT ARRAY NOT NEEDED FOR BONUS; REMOVE!
 **
-** This function will also initialize three additional mutexes used by the
-** project, idlock, waiter and printlock. The time_to_eat and time_to_sleep
-** variables passed by the user are transformed to microseconds for use with the
-** usleep function.
+** This function will create the print semaphore. The print semaphore is a
+** binary named semaphore that works essentially like a mutex and will be used
+** to regulate exclusive access to stdout from all processes.
 **
-** If any of the initializations fail, an error message is displayed and 0 is
-** returned. Otherwise, 1 is returned.
+** The time_to_eat, time_to_sleep and time_to_die variables passed by the user
+** are transformed to microseconds for use with the usleep function.
+**
+** If print semaphore creation fails, an error message is displayed and 0 is
+** returned. Otherwise 1 is returned.
 */
 
 int	philo_init(int number_of_philosophers, t_progdata *progdata)
