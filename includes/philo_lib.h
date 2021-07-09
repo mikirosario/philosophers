@@ -6,13 +6,14 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/07 21:28:35 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/09 09:29:02 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_LIB_H
 # define PHILO_LIB_H
 # include "ansi_color_codes.h"
+# include <semaphore.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <pthread.h>
@@ -39,10 +40,14 @@ typedef struct s_progdata
 	int						number_of_forks;
 	int						argc;
 	int						error;
+	int						bonus_uid;
 	long long int			usec_time_to_eat;
 	long long int			usec_time_to_sleep;
 	long long int			usec_time_to_die;
 	long long unsigned int	time_start;
+	sem_t					*forksem;
+	sem_t					*waitersem;
+	sem_t					*printsem;
 	pthread_t				*thread;
 		//pthread_mutex_t	*waiter;
 	pthread_mutex_t			*forks;
