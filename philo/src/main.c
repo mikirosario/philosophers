@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/07 21:49:35 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/09 18:02:56 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,10 @@ int	main(int argc, char **argv)
 	{
 		size_t i = 0;
 		while (!(&progdata.philosopher[i])->died && hungry_philosophers(&progdata))
+		{
 			if (++i == (size_t)progdata.number_of_philosophers)
 				i = 0;
+		}
 		if ((&progdata.philosopher[i])->died)
 			hemlock(&progdata);
 		tjoin(&progdata);

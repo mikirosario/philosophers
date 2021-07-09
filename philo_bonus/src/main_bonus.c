@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 10:26:25 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 01:57:04 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 /*
 ** This function checks and frees all memory reserved during run-time and also
@@ -23,6 +24,11 @@
 
 void	freeme(t_progdata *progdata)
 {
+	// // MI GOZO EN UN POZO
+	// if (sem_close(progdata->killsem))
+	// 	printf("Failure in sem_close call on killsem in freeme PROC_ID: %d\n",
+	// 	progdata->bonus_uid);
+	// // MI GOZO EN UN POZO
 	if (sem_close(progdata->printsem))
 		printf("Failure in sem_close call on printsem in freeme PROC_ID: %d\n",
 		progdata->bonus_uid);
@@ -32,9 +38,6 @@ void	freeme(t_progdata *progdata)
 	if (sem_close(progdata->forksem))
 		printf("Failure in sem_close call on forksem in freeme PROC_ID: %d\n",
 		progdata->bonus_uid);
-	if (progdata->philosopher)
-		free(progdata->philosopher);
-	progdata->philosopher = NULL;
 	return ;
 }
 
@@ -42,6 +45,12 @@ void	exit_success(t_progdata *progdata)
 {
 	freeme(progdata);
 	exit(EXIT_SUCCESS);
+}
+
+void	exit_failure(t_progdata *progdata)
+{
+	freeme(progdata);
+	exit(EXIT_FAILURE);
 }
 
 /*
@@ -65,12 +74,17 @@ void	exit_success(t_progdata *progdata)
 int	main(int argc, char **argv)
 {
 	t_progdata	progdata;
+	//pid_t		deadproc;
 	int			stat_loc;
 
 	pl_bzero(&progdata, sizeof(t_progdata));
+	stat_loc = 0;
 	// //unit test
 	// get_args_utest(argc, argv, &progdata);
 	// //unit test
+	// // MI GOZO EN UN POZO
+	// sem_unlink("/killsem");
+	// // MI GOZO EN UN POZO
 	sem_unlink("/forksem");
 	sem_unlink("/printsem");
 	sem_unlink("/waitersem");
@@ -78,13 +92,56 @@ int	main(int argc, char **argv)
 	if (setup(&progdata, argc, argv))
 	{
 		size_t i = 0;
+		pid_t deadproc;
 		i = 0;
-		while (i++ < (size_t)progdata.number_of_philosophers)
-			waitpid(-1, &stat_loc, WUNTRACED);
+		//FUNCIONAL; PERO ME GUSTABA MÁS MI GOZO :_(
+		deadproc = waitpid(-1, &stat_loc, WUNTRACED);
+		//add deadproc array, more robust check
+		//philosopher was full
+		if (!stat_loc)
+		{
+			while  (i++ < (size_t)progdata.number_of_philosophers - 1)
+				deadproc = waitpid(-1, &stat_loc, WUNTRACED);
+		}
+		//philosopher died
+		else
+		{
+			while(i < (size_t)progdata.number_of_philosophers - 1)
+			{
+				if (progdata.children[i] != deadproc)
+					kill(progdata.children[i], SIGTERM);
+				i++;
+			}
+		}
+		//FUNCIONAL Y ABURRIDO
+	
+		// // MI GOZO EN UN POZO
+		// waitpid(-1, &stat_loc, WUNTRACED);
+		// i = 0;
+		// while (i++ < (size_t)progdata.number_of_philosophers - 1)
+		// 	sem_post(progdata.killsem);
+		// i = 0;
+		// while (i++ < (size_t)progdata.number_of_philosophers - 1)
+		// {
+		// 	pid_t	pid;
+		// 	printf("WAITING\n");
+		// 	pid = waitpid(-1, &stat_loc, WUNTRACED);
+		// 	printf("DID WAITPID %d\n", pid);
+		// }
+		// // MI GOZO EN UN POZO
 	}
+	// // MI GOZO EN UN POZO
+	// sem_unlink("/killsem");
+	// // MI GOZO EN UN POZO
 	sem_unlink("/forksem");
 	sem_unlink("/printsem");
 	sem_unlink("/waitersem");
+	if (progdata.philosopher)
+		free(progdata.philosopher);
+	if  (progdata.children)
+		free(progdata.children);
+	progdata.philosopher = NULL;
+	progdata.children = NULL;
 	exit_success(&progdata);
 	return (0);
 }

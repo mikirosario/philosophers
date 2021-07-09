@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_init_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 10:44:07 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 01:05:09 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,21 +80,30 @@ int	fork_init(int number_of_forks, t_progdata *progdata)
 
 int	proc_init(int number_of_philosophers, t_progdata *progdata)
 {
-	pid_t	pid;
+	//pid_t	pid;
 
- 	progdata->time_start = pl_get_time_msec();
+	progdata->children = malloc(number_of_philosophers * sizeof(pid_t));
+	if (progdata->children == NULL)
+		return (iamerror(MALLOC_ERR, "proc_init"));
+	// // MI GOZO EN UN POZO
+	// progdata->killsem = sem_open("/killsem", O_CREAT | O_EXCL, S_IRWXU | S_IRWXG | S_IRWXO, 0);
+	// if (progdata->killsem == SEM_FAILED)
+	// 	return (iamerror(SEM_OPEN_FAIL, "proc_init"));
+ 	// // MI GOZO EN UN POZO
+	 progdata->time_start = pl_get_time_msec();
 	while (number_of_philosophers-- > 0)
 	{
-		pid = fork();
-		if (pid < 1) //soy hijo o ha habido error
-			break;
+		progdata->children[progdata->bonus_uid] = fork();
+		if (progdata->children[progdata->bonus_uid] < 1) //soy hijo o ha habido error
+			break ;
 		progdata->bonus_uid++;
 	}
-	if (pid == 0) //soy hijo -> empieza nueva vida
+	if (number_of_philosophers == -1)
+		return (1);
+	else if (progdata->children[progdata->bonus_uid] == 0) //soy hijo -> empieza nueva vida
 		life_cycle(progdata);
-	else if (pid == -1) //soy padre y ha habido error -> aborta
-		return (iamerror(FORK_FAILURE, "proc_init"));
-	return (1);
+//soy padre y ha habido error -> aborta
+	return (iamerror(FORK_FAILURE, "proc_init"));
 }
 
 /*
@@ -133,3 +142,4 @@ int	philo_init(int number_of_philosophers, t_progdata *progdata)
 	progdata->usec_time_to_die = progdata->time_to_die * 1000;
 	return (1);
 }
+	

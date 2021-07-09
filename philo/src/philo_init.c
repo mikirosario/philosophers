@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/03 20:22:29 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/09 20:33:29 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int	thread_init(int number_of_philosophers, t_progdata *progdata)
 {
 	size_t		i;
 
-	progdata->thread = malloc(number_of_philosophers * sizeof(pthread_t *));
+	progdata->thread = malloc(number_of_philosophers * sizeof(pthread_t));
 	if (progdata->thread == NULL)
 		return (iamerror(MALLOC_ERR, "thread_init"));
 	i = 0;

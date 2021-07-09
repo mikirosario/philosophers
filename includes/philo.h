@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/08 22:59:03 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/09 17:29:55 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	inform(char *msg, int id, t_progdata *progdata);
 char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, \
 		int id);
 char	is_full(t_progdata *progdata, int id);
+void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata);
 void	*life_cycle(void *progdata);
 
 #endif

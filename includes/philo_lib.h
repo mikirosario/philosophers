@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_lib.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 09:29:02 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/09 23:18:17 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ typedef struct s_philosopher
 	char					died;
 	char					murdered;
 	char					eating;
+	char					hasfork1;
+	char					hasfork2;
 }				t_philosopher;
 
 typedef struct s_progdata
@@ -45,9 +47,12 @@ typedef struct s_progdata
 	long long int			usec_time_to_sleep;
 	long long int			usec_time_to_die;
 	long long unsigned int	time_start;
+	pid_t					*children;
+	sem_t					*killsem;
 	sem_t					*forksem;
 	sem_t					*waitersem;
 	sem_t					*printsem;
+	pthread_t				reaper;
 	pthread_t				*thread;
 		//pthread_mutex_t	*waiter;
 	pthread_mutex_t			*forks;
@@ -55,6 +60,7 @@ typedef struct s_progdata
 	pthread_mutex_t			idlock;
 	pthread_mutex_t			printlock;
 	pthread_mutex_t			waiter;
+	char					stop;
 }				t_progdata;
 
 char					check_args(char **argv);
@@ -68,6 +74,7 @@ long long unsigned int	pl_msec_diff(struct timeval *t0, struct timeval *t1);
 long long unsigned int	pl_timeval_to_msec(struct timeval *time);
 long long unsigned int	pl_timeval_to_usec(struct timeval *time);
 long long unsigned int	pl_get_time_msec(void);
+int						pl_strcmp(const char *s1, const char *s2);
 void					pl_usleep(long long unsigned int wait);
 
 #endif

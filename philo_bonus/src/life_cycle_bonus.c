@@ -3,68 +3,66 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 09:47:18 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 01:49:06 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 /*
 ** This function checks whether there is only one philosopher. If there is only
 ** one philosopher, there is only one fork. Since philosophers need two forks to
-** eat, a sole philosopher must die. If fork1 == fork2 then there is only one
-** fork, and therefore only one philosopher. In that case, we have the
-** philosopher sleep for time_to_die milliseconds, register its death, and
-** unlock its mutexes before returning 1. Otherwise, we return 0. I add 1ms to
-** time_to_sleep, otherwise sometimes the is_dead instructions are executed so
-** quickly that the philosopher survives and the program hangs waiting for its
-** termination.
+** eat, a sole philosopher must die.
 **
-** If there is more than one philosopher we immediately return 0. Otherwise, we
-** wait time_to_die milliseconds, we run is_dead, which will confirm and
-** register the philosopher's death, informing the main function of it so it can
-** kill the other philosophers. Then we return 1.
+** In that case, we have the philosopher sleep for time_to_die milliseconds,
+** and then we run is_dead to register its death.. I add 1ms to time_to_sleep,
+** otherwise sometimes the is_dead instructions are executed so quickly that the
+** philosopher survives and the program hangs waiting for its termination.
+**
+** If there is more than one philosopher this function does nothing.
 */
 
-void	one_philosopher(int id, long long unsigned int *last_meal, \
+char	one_philosopher(int id, long long unsigned int *last_meal, \
 t_progdata *progdata)
 {
 	if (progdata->number_of_philosophers == 1)
 	{
 		pl_usleep(progdata->usec_time_to_die + 1000);
 		is_dead(progdata, last_meal, id);
+		return (1);
 	}
+	return (0);
 }
 
 /*
-** This function simply unlocks the philosopher's forks. If an unlock fails, we
-** notify the user.
+** This function simply has the philosopher return its forks to the table by
+** posting the associated semaphore twice. If a post fails, we notify the user.
 **
 ** The redundant printfs are brought to you by norminette.
 */
 
 void	unlock_forks(t_progdata *progdata)
 {
-	int	i;
+	int		i;
+	char	*msg[2];
 
 	i = 0;
-
+	msg[0] = "first";
+	msg[1] = "second";
 	while (i < 2)
 	{
-		char	*msg[2];
-
-		msg[0] = "first";
-		msg[1] = "second";
 		if (sem_post(progdata->forksem) == -1)
 		{
 			sem_wait(progdata->printsem);
 			printf(RED);
-			printf("Failed %s sem_post(progdata->forksem) in unlock_forks\n", msg[i]);
+			printf("Failed %s sem_post(progdata->forksem) in unlock_forks\n", \
+			msg[i]);
 			printf(RESET);
 			sem_post(progdata->printsem);
 		}
@@ -74,39 +72,39 @@ void	unlock_forks(t_progdata *progdata)
 }
 
 /*
-** Each philosopher is seated in a circle with a fork to its left and right.
+** Each philosopher is seated in a circle with a pile of forks in the middle.
 **
 ** Thinking happens after sleeping. Before thinking we check if a philosopher
 ** slept too long and is dead. If it is, we return 0. If not, we start thinking.
 **
 ** "Thinking" is basically what a philosopher does before picking up its forks.
-** Forks are mutexes. If another philosopher has the mutex, then it can't be
-** picked up.
+** Forks are integers in the forksem semaphore and there are as many forks as
+** there are philosophers. Each philosopher requires two forks to eat. If all
+** forks are held by philosophers, then philosophers must wait before picking up
+** more forks.
 **
-** Each philosopher has an ID number corresponding to its position in the
-** philosophers array, and a fork to its left and right. It will identify one
-** fork as fork1 and another fork as fork2, and will always pick up fork1 first.
+** Philosophers are served by waiters. Waiters are integers in the waitsem
+** semaphore. Waiters serve philosophers forks two at a time. There is one
+** waiter for every pair of forks, which is to say there are number_of_forks / 2
+** waiters.
 **
-** Each philosopher identifies its fork1 as its right fork (fork[id]) and its
-** fork2 as its left fork as (fork[id + 1]), except the last philosopher, who
-** identifies its fork1 as its left fork (fork[0]) and fork2 as its right fork
-** (fork[id]).
-**
-** This prevents deadlock because, even if every philosopher were to take their
-** fork1 simultaneously, at least one philosopher would be unable to do it,
-** since philosopher[0] and philosopher[n] have the same fork1, and so that
-** philosopher would also be unable to take its fork2, and so someone would be
-** able to eat.
+** When a philosopher wants forks it must get the 'attention' of a waiter by
+** calling wait on the waiter semaphore. When it has a waiter's attention it can
+** pick up its two forks. It will continue to have the attention of the waiter
+** until it releases both forks. If less than two forks are left in the pile,
+** all waiters will be occupied and a philosopher must wait for a waiter to be
+** free before taking its forks.
 **
 ** So the table looks like this, where SOCRATES is philosopher[0], DE BEAUVOIR
 ** is philosopher[1], ARISTOTLE is philosopher[2] and ZAMBRANO is
-** philosopher[3].
+** philosopher[3]. With four forks on the table there are forks / 2 waiters.
 **
-**							fork1<-|0|->fork2
-**					|->fork1 f0	SOCRATES  f1 fork1<----|
-**					|ZAMBRANO	3	@	1	DE BEAUVOIR|
-**					|->fork2 f3	ARISTOTLE f2 fork2<----|
-**							fork2<-|2|->fork1
+**							 waiter | waiter
+**									0
+**								SOCRATES
+**					|ZAMBRANO	3 ffff	1	DE BEAUVOIR|
+**								ARISTOTLE
+**									2
 **
 ** If the philosopher successfully thinks, we return 1.
 */
@@ -117,7 +115,8 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
 	// pthread_mutex_lock(&((t_progdata *)progdata)->waiter);
-	one_philosopher(id, last_meal, progdata);
+	if (one_philosopher(id, last_meal, progdata))
+		return (0);
 	//take forks
 	sem_wait(progdata->waitersem);
 	sem_wait(progdata->forksem);
@@ -229,6 +228,19 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 ** Otherwise, we enter sleeping mode and loop back to thinking.
 */
 
+void	*reaper(void *progdata)
+{
+	//(void)progdata;
+	sem_wait(((t_progdata *)progdata)->killsem);
+	//printf("CHIVATIN %d \n", (((t_progdata *)progdata)->bonus_uid));
+	printf("CHIVATIN %d \n", getpid());
+	//pthread_detach(((t_progdata *)progdata)->reaper);
+	//exit_failure(progdata);
+	kill(getpid(), SIGTERM);
+	return (NULL);
+}
+
+
 void	*life_cycle(void *progdata)
 {
 	int			id;
@@ -236,20 +248,37 @@ void	*life_cycle(void *progdata)
 	long long unsigned int	last_meal;
 
 	pdata = ((t_progdata *)progdata);
+	// // MI GOZO EN UN POZO
+	// pdata->killsem = sem_open("/killsem", 0);
+	// // MI GOZO EN UN POZO
 	pdata->forksem = sem_open("/forksem", 0);
 	pdata->printsem = sem_open("/printsem", 0);
 	pdata->waitersem = sem_open("/waitersem", 0);
+	// // MI GOZO EN UN POZO
+	// if (pthread_create(&pdata->reaper, NULL, reaper, progdata))
+	// {
+	// 	exit_failure(progdata);
+	// }
+	// // MI GOZO EN UN POZO
 	last_meal = pl_get_time_msec();
 	id = pdata->bonus_uid;
 	//identify_forks(id, progdata);
 	while(1)
 	{
+		// // MI GOZO EN UN POZO
+		// if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
+		// || is_full(progdata, id) || is_dead(progdata, &last_meal, id))
+		// 	sem_post(pdata->killsem);
+		// // MI GOZO EN UN POZO
+
 		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
 		|| is_full(progdata, id) || is_dead(progdata, &last_meal, id))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->usec_time_to_sleep);
 	}
+	if (pdata->philosopher[id].died)
+		exit_failure(progdata);
 	exit_success(progdata);
 	return (NULL);
 }

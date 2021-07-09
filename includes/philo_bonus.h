@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/09 09:25:16 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/09 18:46:15 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
 # include "philo_lib.h"
 # include <stdlib.h>
@@ -32,6 +32,7 @@
 */
 
 void	exit_success(t_progdata *progdata);
+void	exit_failure(t_progdata *progdata);
 
 /*
 ** Error Functions

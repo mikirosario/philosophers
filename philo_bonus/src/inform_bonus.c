@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   inform_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:43:36 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/09 00:02:09 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 00:53:56 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	inform(char *msg, int id, t_progdata *progdata)
 		sem_wait(progdata->printsem);
 		printf("%llu %d"" %s\n", pl_get_time_msec() - progdata->time_start, \
 		id + 1, msg);
-		sem_post(progdata->printsem);
+		if (pl_strcmp(msg, RED"died"RESET))
+			sem_post(progdata->printsem);
 	// }
 }
