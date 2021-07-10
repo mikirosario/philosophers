@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/10 13:36:33 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 22:11:50 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,16 @@
 # define PTHREAD_MUTEX_INIT_ERR 5
 # define FORK_FAILURE 6
 # define SEM_OPEN_FAIL 7
+# define STARVED 2
+# define FULL 3
 
 /*
 ** Exit Functions
 */
 
-void	exit_success(t_progdata *progdata);
-void	exit_failure(t_progdata *progdata);
+int		wait_for_full_philosophers(t_progdata *progdata);
+void	kill_philosophers(t_progdata *progdata);
+void	exit_status(t_progdata *progdata, int status);
 
 /*
 ** Error Functions

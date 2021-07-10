@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_functions.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/10 14:37:36 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 22:25:30 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,8 @@ char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
 {
 	long long unsigned int	time_of_death;
 
-	if (starved(progdata, last_meal, id) || (&progdata->philosopher[id])->murdered)
+	if (starved(progdata, last_meal, id) || \
+	(&progdata->philosopher[id])->murdered)
 	{
 		time_of_death = pl_get_time_msec();
 		inform(RED"died"RESET, id, progdata);

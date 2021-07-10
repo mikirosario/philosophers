@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 14:24:48 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 22:21:19 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,11 +226,10 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 ** This is so the parent process can distinguish between types of termination.
 */
 
-
 void	life_cycle(void *progdata)
 {
-	int			id;
-	t_progdata	*pdata;			
+	int						id;
+	t_progdata				*pdata;			
 	long long unsigned int	last_meal;
 
 	pdata = ((t_progdata *)progdata);
@@ -239,7 +238,7 @@ void	life_cycle(void *progdata)
 	pdata->waitersem = sem_open("/waitersem", 0);
 	last_meal = pl_get_time_msec();
 	id = pdata->bonus_uid;
-	while(1)
+	while (1)
 	{
 		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
 		|| is_dead(progdata, &last_meal, id) || is_full(progdata, id))
@@ -248,6 +247,6 @@ void	life_cycle(void *progdata)
 		pl_usleep(pdata->usec_time_to_sleep);
 	}
 	if (pdata->philosopher[id].died)
-		exit_failure(progdata);
-	exit_success(progdata);
+		exit_status(progdata, STARVED);
+	exit_status(progdata, FULL);
 }

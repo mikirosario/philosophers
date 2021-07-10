@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 14:41:58 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/11 00:31:57 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,39 +45,38 @@ t_progdata *progdata)
 }
 
 /*
-** This function simply unlocks the philosopher's forks. If an unlock fails, we
-** notify the user.
+** This function simply unlocks the philosopher's forks if the philosopher has
+** locked them. If an unlock fails, we notify the user.
 **
-** The redundant printfs are brought to you by norminette.
+** The special printf style is brought to you by norminette. ;)
 */
 
 void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 {
-	if (progdata->philosopher[id].hasfork2)
-	{
-		if (pthread_mutex_unlock(&progdata->forks[fork2]))
-		{
-			pthread_mutex_lock(&progdata->printlock);
-			printf(RED);
-			printf("Failed pthread_mutex_unlock(fork[%d]) in unlock_forks\n", \
-			fork2);
-			printf(RESET);
-			pthread_mutex_unlock(&progdata->printlock);
-		}
-		progdata->philosopher[id].hasfork2 = 0;
-	}
+	char	*msg1;
+	char	*msg2;
+
+	msg1 = "Failed pthread_mutex_unlock(fork[";
+	msg2 = "]) in unlock_forks\n";
 	if (progdata->philosopher[id].hasfork1)
 	{
 		if (pthread_mutex_unlock(&progdata->forks[fork1]))
 		{
 			pthread_mutex_lock(&progdata->printlock);
-			printf(RED);
-			printf("Failed pthread_mutex_unlock(fork[%d]) in unlock_forks\n", \
-			fork1);
-			printf(RESET);
+			printf(RED"%s%d%s"RESET, msg1, fork1, msg2);
 			pthread_mutex_unlock(&progdata->printlock);
 		}
 		progdata->philosopher[id].hasfork1 = 0;
+	}
+	if (progdata->philosopher[id].hasfork2)
+	{
+		if (pthread_mutex_unlock(&progdata->forks[fork2]))
+		{
+			pthread_mutex_lock(&progdata->printlock);
+			printf(RED"%s%d%s"RESET, msg1, fork2, msg2);
+			pthread_mutex_unlock(&progdata->printlock);
+		}
+		progdata->philosopher[id].hasfork2 = 0;
 	}
 }
 
@@ -129,10 +128,8 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
-	// pthread_mutex_lock(&((t_progdata *)progdata)->waiter);
 	if (one_philosopher(id, last_meal, progdata))
 		return (0);
-	//take forks
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork1]);
@@ -143,7 +140,6 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	pthread_mutex_lock(&progdata->forks[fork2]);
 	progdata->philosopher[id].hasfork2 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
-	// pthread_mutex_unlock(&((t_progdata *)progdata)->waiter);
 	return (1);
 }
 
@@ -252,15 +248,17 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 
 void	*life_cycle(void *progdata)
 {
-	int			id;
-	t_progdata	*pdata;			
+	int						id;
+	t_progdata				*pdata;			
 	long long unsigned int	last_meal;
 
 	pdata = ((t_progdata *)progdata);
-	last_meal = pl_get_time_msec();
 	id = identify_self(progdata);
+	if (id % 2 == 0)
+		pdata->philosopher[id].even = 1;
 	identify_forks(id, progdata);
-	while(1)
+	last_meal = pl_get_time_msec();
+	while (1)
 	{
 		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
 		|| is_dead(progdata, &last_meal, id) || is_full(progdata, id))

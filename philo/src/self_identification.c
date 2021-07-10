@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 01:50:57 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/04 02:52:33 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/11 00:35:37 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,23 @@
 
 void	identify_forks(int id, t_progdata *progdata)
 {
-	if (id < (progdata->number_of_philosophers - 1))
+	//id par
+	if (!progdata->philosopher[id].even)
 	{
 		(progdata->philosopher[id]).fork1 = id;
-		(progdata->philosopher[id]).fork2 = id + 1;
+		if (id < (progdata->number_of_philosophers - 1))
+			(progdata->philosopher[id]).fork2 = id + 1;
+		else
+			(progdata->philosopher[id]).fork2 = 0;
 	}
+	//id impar
 	else
 	{
-		(progdata->philosopher[id]).fork1 = 0;
 		(progdata->philosopher[id]).fork2 = id;
+		if (id < (progdata->number_of_philosophers - 1))
+			(progdata->philosopher[id]).fork1 = id + 1;
+		else
+			(progdata->philosopher[id]).fork1 = 0;
 	}
 }
 

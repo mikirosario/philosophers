@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 23:18:17 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/11 00:38:07 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ typedef struct s_philosopher
 	char					eating;
 	char					hasfork1;
 	char					hasfork2;
+
+	//experimentos
+	char					even;
 }				t_philosopher;
 
 typedef struct s_progdata
@@ -47,6 +50,7 @@ typedef struct s_progdata
 	long long int			usec_time_to_sleep;
 	long long int			usec_time_to_die;
 	long long unsigned int	time_start;
+	int						*deadchildren;
 	pid_t					*children;
 	sem_t					*killsem;
 	sem_t					*forksem;
@@ -54,13 +58,20 @@ typedef struct s_progdata
 	sem_t					*printsem;
 	pthread_t				reaper;
 	pthread_t				*thread;
-		//pthread_mutex_t	*waiter;
 	pthread_mutex_t			*forks;
 	t_philosopher			*philosopher;
 	pthread_mutex_t			idlock;
 	pthread_mutex_t			printlock;
-	pthread_mutex_t			waiter;
+	char					gotidlock;
+	char					gotprintlock;
+	char					gotprintsem;
+	char					gotwaitersem;
+	char					gotforksem;
 	char					stop;
+
+	//experimentos
+	char					gotwaiter;
+	pthread_mutex_t			waiter[2];
 }				t_progdata;
 
 char					check_args(char **argv);

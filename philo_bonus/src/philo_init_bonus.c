@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   philo_init_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 14:15:54 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 22:33:32 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
-#include <fcntl.h>
-#include <sys/stat.h>
 
 /*
 ** This function opens the waiter semaphore. The waiter semaphore controls
@@ -35,6 +33,8 @@ int	waiter_init(int	number_of_forks, t_progdata *progdata)
 	O_CREAT | O_EXCL, 0644, number_of_forks / 2);
 	if (progdata->waitersem == SEM_FAILED)
 		return (iamerror(SEM_OPEN_FAIL, "waiter_init"));
+	else
+		progdata->gotwaitersem = 1;
 	return (1);
 }
 
@@ -54,6 +54,8 @@ int	fork_init(int number_of_forks, t_progdata *progdata)
 	O_CREAT | O_EXCL, 0644, number_of_forks);
 	if (progdata->forksem == SEM_FAILED)
 		return (iamerror(SEM_OPEN_FAIL, "fork_init"));
+	else
+		progdata->gotforksem = 1;
 	return (1);
 }
 
@@ -93,13 +95,13 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 	while (number_of_philosophers-- > 0)
 	{
 		progdata->children[progdata->bonus_uid] = fork();
-		if (progdata->children[progdata->bonus_uid] < 1) //soy hijo o ha habido error
+		if (progdata->children[progdata->bonus_uid] < 1)
 			break ;
 		progdata->bonus_uid++;
 	}
 	if (number_of_philosophers == -1)
 		return (1);
-	else if (progdata->children[progdata->bonus_uid] == 0) //soy hijo -> empieza nueva vida
+	else if (progdata->children[progdata->bonus_uid] == 0)
 		life_cycle(progdata);
 	return (iamerror(FORK_FAILURE, "proc_init"));
 }
@@ -110,6 +112,14 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 ** corresponding to each philosopher, which will be used to store the particular
 ** status of each philosopher. They are zeroed upon creation.
 ** PHILOSOPHER STRUCT ARRAY NOT NEEDED FOR BONUS; REMOVE!
+**
+** This function will create the deadchildren array. This array is used to keep
+** track of children that have exited because they are full. If a child exits
+** because it is full and later another child dies and we kill all the remaining
+** child processes, we will skip over the children that already terminated by
+** checking for their pid in the deadchildren array.
+**
+** Processes will never have the pid 0, so we initialize the array with 0.
 **
 ** This function will create the print semaphore. The print semaphore is a
 ** binary named semaphore that works essentially like a mutex and will be used
@@ -126,18 +136,26 @@ int	philo_init(int number_of_philosophers, t_progdata *progdata)
 {
 	size_t	i;
 
-	progdata->philosopher = malloc(number_of_philosophers * sizeof(t_philosopher));
+	progdata->philosopher = \
+	malloc(number_of_philosophers * sizeof(t_philosopher));
 	if (progdata->philosopher == NULL)
 		return (iamerror(MALLOC_ERR, "philo_init"));
+	progdata->deadchildren = \
+	malloc(progdata->number_of_philosophers * sizeof(int));
+	if (progdata->deadchildren == NULL)
+		return (iamerror(MALLOC_ERR, "philo_init"));
+	pl_bzero(progdata->deadchildren, \
+	progdata->number_of_philosophers * sizeof(int));
 	i = 0;
 	while (i < (size_t)number_of_philosophers)
 		pl_bzero(&progdata->philosopher[i++], sizeof(t_philosopher));
 	progdata->printsem = sem_open("/printsem", O_CREAT | O_EXCL, 0644, 1);
 	if (progdata->printsem == SEM_FAILED)
 		return (iamerror(SEM_OPEN_FAIL, "philo_init"));
+	else
+		progdata->gotprintsem = 1;
 	progdata->usec_time_to_eat = progdata->time_to_eat * 1000;
 	progdata->usec_time_to_sleep = progdata->time_to_sleep * 1000;
 	progdata->usec_time_to_die = progdata->time_to_die * 1000;
 	return (1);
 }
-	

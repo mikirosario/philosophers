@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pl_msec_diff.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 17:02:32 by miki              #+#    #+#             */
-/*   Updated: 2021/06/23 17:46:46 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 22:36:53 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@
 
 long long unsigned int	pl_msec_diff(struct timeval *t0, struct timeval *t1)
 {
-	struct timeval t_end;
+	struct timeval	t_end;
 
 	if (!t0)
 		return (0);

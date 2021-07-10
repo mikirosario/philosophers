@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
+#    By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/07/10 13:57:28 by miki             ###   ########.fr        #
+#    Updated: 2021/07/10 22:26:09 by mrosario         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,13 +28,13 @@ P1SRC = ./$(NAME)/src/
 
 PBSRC = ./$(BONUS)/src/
 
-P1FILES = $(P1SRC)main.c $(P1SRC)unit_tests.c $(P1SRC)philo_init.c \
-$(P1SRC)iamerror.c $(P1SRC)life_cycle.c $(P1SRC)self_identification.c \
-$(P1SRC)is_functions.c $(P1SRC)inform.c $(P1SRC)setup.c
+P1FILES = $(P1SRC)main.c $(P1SRC)philo_init.c $(P1SRC)iamerror.c \
+$(P1SRC)life_cycle.c $(P1SRC)self_identification.c $(P1SRC)is_functions.c \
+$(P1SRC)inform.c $(P1SRC)setup.c
 
 PBFILES = $(PBSRC)main_bonus.c  $(PBSRC)philo_init_bonus.c $(PBSRC)inform_bonus.c \
 $(PBSRC)iamerror_bonus.c $(PBSRC)life_cycle_bonus.c $(PBSRC)is_functions_bonus.c \
-$(PBSRC)setup_bonus.c $(PBSRC)unit_tests.c
+$(PBSRC)setup_bonus.c $(PBSRC)reap_philosophers_bonus.c
 
 PHILO_LIB = ./philo_lib/libphilo.a
 

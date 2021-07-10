@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 14:39:47 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/11 00:23:25 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,19 @@
 
 void	freeme(t_progdata *progdata)
 {
-	if (pthread_mutex_destroy(&progdata->idlock))
-		printf("Failure in pthread_mutex_destroy call on idlock in freeme\n");
-	if (pthread_mutex_destroy(&progdata->waiter))
-		printf("Failure in pthread_mutex_destroy call on waiter in freeme\n");
+	if (progdata->gotidlock)
+		if (pthread_mutex_destroy(&progdata->idlock))
+			printf("Failed pthread_mutex_destroy call on idlock in freeme\n");
+	if (progdata->gotprintlock)
+		if (pthread_mutex_destroy(&progdata->printlock))
+			printf("Failed pthread_mutex_destroy call on printlock in freeme\n");
+	if (progdata->gotwaiter)
+		if (pthread_mutex_destroy(&progdata->waiter[0]) || pthread_mutex_destroy(&progdata->waiter[1]))
+			printf("Failed pthread_mutex_destroy call on waiter in freeme\n");
 	while (progdata->number_of_forks--)
 		if (pthread_mutex_destroy(progdata->forks + progdata->number_of_forks))
 			printf \
-			("Failure in pthread_mutex_destroy call on forks[%d] in freeme\n", \
+			("Failed pthread_mutex_destroy call on forks[%d] in freeme\n", \
 			progdata->number_of_forks);
 	if (progdata->thread)
 		free(progdata->thread);
@@ -37,6 +42,8 @@ void	freeme(t_progdata *progdata)
 	if (progdata->philosopher)
 		free(progdata->philosopher);
 	progdata->philosopher = NULL;
+	progdata->forks = NULL;
+	progdata->thread = NULL;
 	return ;
 }
 /*
@@ -107,17 +114,16 @@ void	tjoin(t_progdata *progdata)
 int	main(int argc, char **argv)
 {
 	t_progdata	progdata;
+	size_t		i;
 
 	pl_bzero(&progdata, sizeof(t_progdata));
-	//printf("\n");
 	if (setup(&progdata, argc, argv))
 	{
-		size_t i = 0;
-		while (!(&progdata.philosopher[i])->died && hungry_philosophers(&progdata))
-		{
+		i = 0;
+		while (!(&progdata.philosopher[i])->died && \
+		hungry_philosophers(&progdata))
 			if (++i == (size_t)progdata.number_of_philosophers)
 				i = 0;
-		}
 		if ((&progdata.philosopher[i])->died)
 			hemlock(&progdata);
 		tjoin(&progdata);
