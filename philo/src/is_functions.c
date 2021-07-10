@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_functions.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/09 19:56:41 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:37:36 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,9 @@ char	is_full(t_progdata *progdata, int id)
 ** user with a message. Then the philosopher's died variable is set to 1, in
 ** case it wasn't already. In any case, we return the value of the philosopher's
 ** died variable.
+**
+** NOTE: The first starved philosopher will now flip the stop flag to mute the
+** other threads, per popular demand.
 */
 
 char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)

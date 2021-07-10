@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_init_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 01:05:09 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:15:54 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@
 
 int	waiter_init(int	number_of_forks, t_progdata *progdata)
 {
-	progdata->waitersem = sem_open("/waitersem", O_CREAT | O_EXCL, S_IRWXU | S_IRWXG | S_IRWXO, number_of_forks / 2);
+	progdata->waitersem = sem_open("/waitersem", \
+	O_CREAT | O_EXCL, 0644, number_of_forks / 2);
 	if (progdata->waitersem == SEM_FAILED)
 		return (iamerror(SEM_OPEN_FAIL, "waiter_init"));
 	return (1);
@@ -40,7 +41,7 @@ int	waiter_init(int	number_of_forks, t_progdata *progdata)
 /*
 ** This function opens the semaphore that represents the pile of forks in the
 ** middle of the table. So basically it's just a semaphore initialized to
-** nuimber_of_forks. We name it /forksem. The address is saved at
+** number_of_forks. We name it /forksem. The address is saved at
 ** progdata->forksem.
 **
 ** If the sem_open function fails, an appropriate error message is displayed
@@ -49,48 +50,46 @@ int	waiter_init(int	number_of_forks, t_progdata *progdata)
 
 int	fork_init(int number_of_forks, t_progdata *progdata)
 {
-	progdata->forksem = sem_open("/forksem", O_CREAT | O_EXCL, S_IRWXU | S_IRWXG | S_IRWXO, number_of_forks);
+	progdata->forksem = sem_open("/forksem", \
+	O_CREAT | O_EXCL, 0644, number_of_forks);
 	if (progdata->forksem == SEM_FAILED)
 		return (iamerror(SEM_OPEN_FAIL, "fork_init"));
 	return (1);
 }
 
 /*
-** This function spawns all the child processes. First we initialize time by
-** getting a timestamp, which we save at time_start. We'll subtract this from
-** future time_stamps to get the relative times for all processes, so this time
-** counts as the "simulation start".
+** This function spawns all the child processes.
+**
+** First we create an array to store the pid of every child process we will
+** create.
+**
+** Next we initialize time by getting a timestamp, which we save at
+** progdata->time_start. We'll subtract this from future timestamps to get the
+** relative times for all processes, so this time counts as the "simulation
+** start".
 **
 ** For each philosopher we fork a new process in the while. Child processes
 ** break away from the while and start their new lives by calling the life_cycle
 ** function. Failed forks cause the parent process to break from the while and
 ** display an error message before returning 0. We also increment the bonus_uid
-** int between fork calls, which will allow each process to identify itself.
+** integer between fork calls, which will allow each process to identify itself.
 **
 ** Do not confuse the fork function with the forks on the table... two
 ** completely different concepts. xD
 **
 ** If all philosophers are successfully forked into child processes we leave the
-** while with the pid of the last child. I might save the pids in an array or
-** something, but I haven't really seen the need. Since we're allowed exit for
-** this project, I just have the processes kill themselves as needed.
+** while with number_of_philosophers == -1. The parent will then return 1.
 **
-** Child processes will continue in life_cycle. Parent process will return.
+** Child processes will continue in life_cycle. Parent process will return 0 or
+** 1 as failed or successful.
 */
 
 int	proc_init(int number_of_philosophers, t_progdata *progdata)
 {
-	//pid_t	pid;
-
 	progdata->children = malloc(number_of_philosophers * sizeof(pid_t));
 	if (progdata->children == NULL)
 		return (iamerror(MALLOC_ERR, "proc_init"));
-	// // MI GOZO EN UN POZO
-	// progdata->killsem = sem_open("/killsem", O_CREAT | O_EXCL, S_IRWXU | S_IRWXG | S_IRWXO, 0);
-	// if (progdata->killsem == SEM_FAILED)
-	// 	return (iamerror(SEM_OPEN_FAIL, "proc_init"));
- 	// // MI GOZO EN UN POZO
-	 progdata->time_start = pl_get_time_msec();
+	progdata->time_start = pl_get_time_msec();
 	while (number_of_philosophers-- > 0)
 	{
 		progdata->children[progdata->bonus_uid] = fork();
@@ -102,7 +101,6 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 		return (1);
 	else if (progdata->children[progdata->bonus_uid] == 0) //soy hijo -> empieza nueva vida
 		life_cycle(progdata);
-//soy padre y ha habido error -> aborta
 	return (iamerror(FORK_FAILURE, "proc_init"));
 }
 
@@ -134,7 +132,7 @@ int	philo_init(int number_of_philosophers, t_progdata *progdata)
 	i = 0;
 	while (i < (size_t)number_of_philosophers)
 		pl_bzero(&progdata->philosopher[i++], sizeof(t_philosopher));
-	progdata->printsem = sem_open("/printsem", O_CREAT | O_EXCL, S_IRWXU | S_IRWXG | S_IRWXO, 1);
+	progdata->printsem = sem_open("/printsem", O_CREAT | O_EXCL, 0644, 1);
 	if (progdata->printsem == SEM_FAILED)
 		return (iamerror(SEM_OPEN_FAIL, "philo_init"));
 	progdata->usec_time_to_eat = progdata->time_to_eat * 1000;

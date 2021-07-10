@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 17:43:39 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:41:58 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	fork1 = (progdata->philosopher[id]).fork1;
 	fork2 = (progdata->philosopher[id]).fork2;
 	progdata->philosopher[id].eating = 1;
-	if (is_full(progdata, id) || is_dead(progdata, last_meal, id))
+	if (is_dead(progdata, last_meal, id) || is_full(progdata, id))
 		return (0);
 	inform(GRN"is eating"RESET, id, progdata);
 	if (progdata->argc == 6)
@@ -263,7 +263,7 @@ void	*life_cycle(void *progdata)
 	while(1)
 	{
 		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
-		|| is_full(progdata, id) || is_dead(progdata, &last_meal, id))
+		|| is_dead(progdata, &last_meal, id) || is_full(progdata, id))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->usec_time_to_sleep);

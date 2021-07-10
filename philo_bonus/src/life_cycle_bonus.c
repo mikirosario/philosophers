@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 01:49:06 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:24:48 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <signal.h>
 
 /*
 ** This function checks whether there is only one philosopher. If there is only
@@ -21,7 +18,7 @@
 ** eat, a sole philosopher must die.
 **
 ** In that case, we have the philosopher sleep for time_to_die milliseconds,
-** and then we run is_dead to register its death.. I add 1ms to time_to_sleep,
+** and then we run is_dead to register its death. I add 1ms to time_to_sleep,
 ** otherwise sometimes the is_dead instructions are executed so quickly that the
 ** philosopher survives and the program hangs waiting for its termination.
 **
@@ -43,6 +40,9 @@ t_progdata *progdata)
 /*
 ** This function simply has the philosopher return its forks to the table by
 ** posting the associated semaphore twice. If a post fails, we notify the user.
+** Note that when both forks are returned to the table we also free a waiter so
+** that another philosopher can get that waiter's attention and pick up the
+** forks.
 **
 ** The redundant printfs are brought to you by norminette.
 */
@@ -114,16 +114,13 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
-	// pthread_mutex_lock(&((t_progdata *)progdata)->waiter);
 	if (one_philosopher(id, last_meal, progdata))
 		return (0);
-	//take forks
 	sem_wait(progdata->waitersem);
 	sem_wait(progdata->forksem);
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	sem_wait(progdata->forksem);
 	inform(YEL"has taken a fork"RESET, id, progdata);
-	// pthread_mutex_unlock(&((t_progdata *)progdata)->waiter);
 	return (1);
 }
 
@@ -151,7 +148,7 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 {
 	progdata->philosopher[id].eating = 1;
-	if (is_full(progdata, id) || is_dead(progdata, last_meal, id))
+	if (is_dead(progdata, last_meal, id) || is_full(progdata, id))
 	{
 		unlock_forks(progdata);
 		return (0);
@@ -170,13 +167,14 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 ** philosopher. Since we pass our struct pointer as void, to avoid having to
 ** cast it to its type every time we use it, we copy its address to a pointer
 ** that is already cast to the right type. Bit of a waste of a cycle but it
-** does make the code cleaner.
+** does make the code cleaner. Then we open all the named semaphores we'll be
+** using.
 **
 ** After that we'll consider this philosopher's life to have started, so we
 ** record the birthdate as our last_meal time. The birthdate is the current time
 ** minus the simuation start time. This treats the start time as the 'zero time'
 ** and records any subsequent increments in relation to the start time. The
-** start time is initialized just before the first thread is created.
+** start time is initialized just before the first process is created.
 **
 ** The first thing a newborn philosopher will need to do is identify itself by
 ** taking a unique ID number. A philosopher's unique ID number is equal to its
@@ -184,95 +182,67 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 ** that we print the first philosopher ID as 1, so when we print a philosopher
 ** ID we add 1 to the unique ID.
 **
-** We will consider that the fork to the right of each philosopher has the same
-** position in the fork array as the philosopher's ID, and the fork to the left
-** of each philosopher will have 1 + the philosopher's ID, except for the last
-** philosopher, whose left fork will always be 0.
+** A philosopher array is not needed in this implementation, it was inherited
+** from the original. Might change this if there is time.
 **
-** The table will look like this:
+** Forks are piled up in the middle of the table and represented by the fork
+** semaphore. There are forks / 2 waiters, that is, one waiter for every pair of
+** forks.
+**
+** The table will look like this with four philosophers:
+**
+**							waiter | waiter
 **
 **							 		0
 **									|
-**							f0  SOCRATES  f1
-**					ZAMBRANO---3	@	 1---DE BEAUVOIR
-**							f3	ARISTOTLE f2
+**								SOCRATES
+**					ZAMBRANO---3  ffff	1---DE BEAUVOIR
+**								ARISTOTLE
 **									|
 **							 		2
 **
-** Once a philosopher has a unique ID number, we use the ID number to identify
-** the forks that pertain to that philosopher. We want to ensure that each
-** philosopher will always identify the lower-numbered fork as fork1 and the
-** higher-numbered fork as fork2, to avoid deadlock (more on this in the eat
-** description).
+** Unlike with the mutex implementation, there is no need here to identify
+** individual forks. The forks are all represented by the fork semaphore and
+** when there are less than two left on the table, all the waiters are occupied,
+** forcing the consumers to wait. Waiters are made available when pairs of forks
+** are returned to the table by the consumers.
 **
-** Generally, fork1 will be fork[philosopher_id] and fork2 will be
-** fork[philosopher_id + 1].
+** If there is only one philosopher there will only be one fork and the
+** philosopher then must die. This is controlled by the one_philosopher special
+** case.
 **
-** However, if the philosopher's ID corresponds to the LAST philosopher, this
-** logic will be inverted as the fork to this philosopher's left will always be
-** fork0. So in this special case, fork1 will be fork[0], while fork2 will be
-** fork[philosopher_id] (the RIGHT fork).
-**
-** If there is only one philosopher there will only be one fork, so both fork1
-** and fork2 will equal 0. This philosopher will also be the last philosopher,
-** so special case rules will apply.
-**
-** Once the forks are identified we enter the life_cycle loop. This is an
+** Once the initial set-up is complete we enter the life cycle loop. This is an
 ** infinite loop in which the philosopher thinks, eats and sleeps in that order.
 ** Thinking fails if a philosopher dies before thinking. Eating fails if a
 ** philosopher either dies or is 'full' (times_ate is equal to
 ** number_of_times_a_philosopher_must_eat) before eating. After eating, we also
 ** check to see if a philosopher is full or dead (took too long to eat). In any
-** of these cases, we break the loop and end the thread.
+** of these cases, we break the loop and leave the loop.
 **
 ** Otherwise, we enter sleeping mode and loop back to thinking.
+**
+** When we leave the loop, if the philosopher died, we return EXIT_FAILURE. If
+** it is alive and stopped eating because it is 'full', we return EXIT_SUCCESS.
+** This is so the parent process can distinguish between types of termination.
 */
 
-void	*reaper(void *progdata)
-{
-	//(void)progdata;
-	sem_wait(((t_progdata *)progdata)->killsem);
-	//printf("CHIVATIN %d \n", (((t_progdata *)progdata)->bonus_uid));
-	printf("CHIVATIN %d \n", getpid());
-	//pthread_detach(((t_progdata *)progdata)->reaper);
-	//exit_failure(progdata);
-	kill(getpid(), SIGTERM);
-	return (NULL);
-}
 
-
-void	*life_cycle(void *progdata)
+void	life_cycle(void *progdata)
 {
 	int			id;
 	t_progdata	*pdata;			
 	long long unsigned int	last_meal;
 
 	pdata = ((t_progdata *)progdata);
-	// // MI GOZO EN UN POZO
-	// pdata->killsem = sem_open("/killsem", 0);
-	// // MI GOZO EN UN POZO
 	pdata->forksem = sem_open("/forksem", 0);
 	pdata->printsem = sem_open("/printsem", 0);
 	pdata->waitersem = sem_open("/waitersem", 0);
-	// // MI GOZO EN UN POZO
-	// if (pthread_create(&pdata->reaper, NULL, reaper, progdata))
-	// {
-	// 	exit_failure(progdata);
-	// }
-	// // MI GOZO EN UN POZO
 	last_meal = pl_get_time_msec();
 	id = pdata->bonus_uid;
-	//identify_forks(id, progdata);
 	while(1)
 	{
-		// // MI GOZO EN UN POZO
-		// if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
-		// || is_full(progdata, id) || is_dead(progdata, &last_meal, id))
-		// 	sem_post(pdata->killsem);
-		// // MI GOZO EN UN POZO
-
 		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
-		|| is_full(progdata, id) || is_dead(progdata, &last_meal, id))
+		|| is_dead(progdata, &last_meal, id) || is_full(progdata, id))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->usec_time_to_sleep);
@@ -280,5 +250,4 @@ void	*life_cycle(void *progdata)
 	if (pdata->philosopher[id].died)
 		exit_failure(progdata);
 	exit_success(progdata);
-	return (NULL);
 }

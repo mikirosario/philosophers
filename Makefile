@@ -6,7 +6,7 @@
 #    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/07/09 02:16:51 by miki             ###   ########.fr        #
+#    Updated: 2021/07/10 13:57:28 by miki             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,8 +33,8 @@ $(P1SRC)iamerror.c $(P1SRC)life_cycle.c $(P1SRC)self_identification.c \
 $(P1SRC)is_functions.c $(P1SRC)inform.c $(P1SRC)setup.c
 
 PBFILES = $(PBSRC)main_bonus.c  $(PBSRC)philo_init_bonus.c $(PBSRC)inform_bonus.c \
-$(PBSRC)iamerror_bonus.c $(PBSRC)life_cycle_bonus.c $(PBSRC)self_identification_bonus.c \
-$(PBSRC)is_functions_bonus.c $(PBSRC)setup_bonus.c $(PBSRC)unit_tests.c
+$(PBSRC)iamerror_bonus.c $(PBSRC)life_cycle_bonus.c $(PBSRC)is_functions_bonus.c \
+$(PBSRC)setup_bonus.c $(PBSRC)unit_tests.c
 
 PHILO_LIB = ./philo_lib/libphilo.a
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/09 18:46:15 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 13:36:33 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,6 @@ void	inform(char *msg, int id, t_progdata *progdata);
 char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, \
 		int id);
 char	is_full(t_progdata *progdata, int id);
-void	*life_cycle(void *progdata);
+void	life_cycle(void *progdata);
 
 #endif

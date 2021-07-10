@@ -6,11 +6,17 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 20:46:09 by mrosario          #+#    #+#             */
-/*   Updated: 2021/06/25 17:50:57 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 14:18:57 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_lib.h"
+
+/*
+** If a number passed as a string has 10 digits we check each digit to make sure
+** it doesn't go over INT_MAX. This program doesn't handle negative integers so
+** we're only interested in positives.
+*/
 
 char	number_too_large(char *numstart, char *numend)
 {

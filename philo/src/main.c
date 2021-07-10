@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 18:02:56 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:39:47 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,10 @@ char	hungry_philosophers(t_progdata *progdata)
 	return (0);
 }
 
+/*
+** This function resolves philosophical debates. ;)
+*/
+
 void	hemlock(t_progdata *progdata)
 {
 	size_t	i;
@@ -70,6 +74,11 @@ void	hemlock(t_progdata *progdata)
 	while (i < (size_t)progdata->number_of_philosophers)
 		(&progdata->philosopher[i++])->murdered = 1;
 }
+
+/*
+** This function will join all threads owned by the process. It's called after
+** philosophers are killed or we confirm they are all full.
+*/
 
 void	tjoin(t_progdata *progdata)
 {
@@ -100,11 +109,7 @@ int	main(int argc, char **argv)
 	t_progdata	progdata;
 
 	pl_bzero(&progdata, sizeof(t_progdata));
-	// //unit test
-	// get_args_utest(argc, argv, &progdata);
-	// //unit test
-
-	printf("\n");
+	//printf("\n");
 	if (setup(&progdata, argc, argv))
 	{
 		size_t i = 0;

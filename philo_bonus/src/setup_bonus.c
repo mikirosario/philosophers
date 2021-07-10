@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 19:01:24 by miki              #+#    #+#             */
-/*   Updated: 2021/07/09 10:26:59 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 14:17:24 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ void	get_args(int argc, char **argv, t_progdata *progdata)
 }
 
 /*
-** This function attempts to do all necessary prior setup and launch the
-** threads. If it succeeds, 1 is returned. If it fails for any reason, 0 is
+** This function attempts to do all necessary prior setup and launch the child
+** processes. If it succeeds, 1 is returned. If it fails for any reason, 0 is
 ** returned. The iamerror function always returns 0. The init functions return
 ** 1 if successful and otherwise 0, so we AND them all together. If any of them
 ** return 0, we return 0. If they all return 1, we return 1.

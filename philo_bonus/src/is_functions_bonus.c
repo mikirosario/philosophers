@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_functions_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/09 18:27:40 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:06:01 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,14 @@ char	is_full(t_progdata *progdata, int id)
 }
 
 /*
-** This function determines whether a philosopher has died. There are two ways
-** a philosopher might die: by starving, or by being killed by the hemlock
-** function because another philosopher has died. If a philosopher starved, or
-** is simply already made dead by the hemlock function, we first get a timestamp
-** of time of death and then immediately inform of the death. Then we
-** immediately get another timestamp and subtract time_of_death from it to
-** ensure not more than 10 milliseconds have passed. If they have, we inform the
-** user with a message. Then the philosopher's died variable is set to 1, in
-** case it wasn't already. In any case, we return the value of the philosopher's
-** died variable.
+** This function determines whether a philosopher has died. A philosopher will
+** die by starving. If a philosopher starved, we first get a timestamp of time
+** of death and then immediately inform of the death. Then we immediately get
+** another timestamp and subtract time_of_death from it to ensure not more than
+** 10 milliseconds have passed. If they have, we inform the user with a message.
+** Then the philosopher's died variable is set to 1 (it will otherwise be 0).
+**
+** In any case, we return the value of the philosopher's died variable.
 */
 
 char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)

@@ -3,14 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   pl_usleep.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 01:56:58 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/04 01:57:09 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:22:31 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_lib.h"
+
+/*
+** Raquel suggested I could get better accuracy by making my own usleep, so I
+** did! :) Will wait for wait microseconds, give or take 50.
+*/
 
 void	pl_usleep(long long unsigned int wait)
 {

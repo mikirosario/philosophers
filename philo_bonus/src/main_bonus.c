@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 01:57:04 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:06:34 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,6 @@ int	main(int argc, char **argv)
 
 	pl_bzero(&progdata, sizeof(t_progdata));
 	stat_loc = 0;
-	// //unit test
-	// get_args_utest(argc, argv, &progdata);
-	// //unit test
-	// // MI GOZO EN UN POZO
-	// sem_unlink("/killsem");
-	// // MI GOZO EN UN POZO
 	sem_unlink("/forksem");
 	sem_unlink("/printsem");
 	sem_unlink("/waitersem");
@@ -94,7 +88,6 @@ int	main(int argc, char **argv)
 		size_t i = 0;
 		pid_t deadproc;
 		i = 0;
-		//FUNCIONAL; PERO ME GUSTABA MÁS MI GOZO :_(
 		deadproc = waitpid(-1, &stat_loc, WUNTRACED);
 		//add deadproc array, more robust check
 		//philosopher was full
@@ -113,26 +106,7 @@ int	main(int argc, char **argv)
 				i++;
 			}
 		}
-		//FUNCIONAL Y ABURRIDO
-	
-		// // MI GOZO EN UN POZO
-		// waitpid(-1, &stat_loc, WUNTRACED);
-		// i = 0;
-		// while (i++ < (size_t)progdata.number_of_philosophers - 1)
-		// 	sem_post(progdata.killsem);
-		// i = 0;
-		// while (i++ < (size_t)progdata.number_of_philosophers - 1)
-		// {
-		// 	pid_t	pid;
-		// 	printf("WAITING\n");
-		// 	pid = waitpid(-1, &stat_loc, WUNTRACED);
-		// 	printf("DID WAITPID %d\n", pid);
-		// }
-		// // MI GOZO EN UN POZO
 	}
-	// // MI GOZO EN UN POZO
-	// sem_unlink("/killsem");
-	// // MI GOZO EN UN POZO
 	sem_unlink("/forksem");
 	sem_unlink("/printsem");
 	sem_unlink("/waitersem");

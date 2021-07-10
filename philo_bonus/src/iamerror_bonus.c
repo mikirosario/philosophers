@@ -6,11 +6,17 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 17:08:32 by miki              #+#    #+#             */
-/*   Updated: 2021/07/08 23:52:19 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/10 13:59:35 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+/*
+** This function prints an error message to STDOUT corresponding to the error
+** code it is passed, along with the string passed as error_func, which should
+** identify the function where the error was thrown.
+*/
 
 int	iamerror(int error_code, char *error_func)
 {
@@ -20,10 +26,6 @@ int	iamerror(int error_code, char *error_func)
 		printf(RED"Wrong number of arguments in %s\n"RESET, error_func);
 	else if (error_code == ARG_SYN_ERR)
 		printf(RED"Argument contains non-digits in %s\n"RESET, error_func);
-	else if (error_code == PTHREAD_CREAT_ERR)
-		printf(RED"Failure in pthread_create call in %s\n"RESET, error_func);
-	else if (error_code == PTHREAD_MUTEX_INIT_ERR)
-		printf(RED"Failure in pthread_mutex_init call in %s\n"RESET, error_func);
 	else if (error_code == FORK_FAILURE)
 		printf(RED"Failure in fork call in %s\n"RESET, error_func);
 	else if (error_code == SEM_OPEN_FAIL)

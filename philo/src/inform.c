@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   inform.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:43:36 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/09 20:05:00 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/10 14:35:44 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,20 @@
 ** This function will now only inform on a philosopher's status if it is alive
 ** or if it died of starvation, not if the main function murdered it via the
 ** hemlock function. We do this by flipping the stop flag when any philosopher
-** dies. The stop flag check is mutexed so it cannot be read until we're done
-** flipping it, and so no other process can decide to print until then.
+** dies. The stop flag check is mutexed so the stop flag cannot be read by any
+** thread until other threads are done flipping it or leaving it alone, and so
+** no other thread can decide to print while another is performing the check.
+**
+** Personally I think it's SILLY. All it does is stop other threads from
+** printing their status until they are killed by main after one thread dies.
+** It does NOT change the underlying functioning OR make the simulation stop
+** any sooner than it otherwise would OR prevent other threads from continuing
+** with their life cycles until they hit the next is_dead check. All it does is
+** mute all the threads.
+**
+** But certain 42 students apparently have a very emotional attachment to having
+** "died" be the last message they see and apparently will FAIL projects that do
+** not satisfy this criterion. So... here it is. :P
 */
 
 void	inform(char *msg, int id, t_progdata *progdata)
