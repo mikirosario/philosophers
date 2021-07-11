@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 05:34:32 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/11 06:22:41 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,10 +153,16 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 		usleep(50);
 	if (one_philosopher(id, last_meal, progdata))
 		return (0);
+	//if (is_dead(progdata, last_meal, id))
+	//	return (0);
+	while (!ration_card(id, progdata) && !progdata->stop)
+	{
+		usleep(50);
+		//if (is_dead(progdata, last_meal, id))
+		//	return (0);
+	}
 	if (is_dead(progdata, last_meal, id))
 		return (0);
-	while (!ration_card(id, progdata))
-		usleep(50);
 	pthread_mutex_lock(&progdata->forks[fork1]);
 	progdata->philosopher[id].hasfork1 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
@@ -202,7 +208,7 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	inform(GRN"is eating"RESET, id, progdata);
 	if (progdata->argc == 6)
 		progdata->philosopher[id].times_ate++;
-	pl_usleep(progdata->usec_time_to_eat + 5000);
+	pl_usleep(progdata->usec_time_to_eat);
 	progdata->philosopher[id].eating = 0;
 	unlock_forks(fork1, fork2, id, progdata);
 	return (1);

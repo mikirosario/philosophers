@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 04:33:55 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/11 06:24:45 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void	tjoin(t_progdata *progdata)
 	i = 0;
 	while (i < (size_t)progdata->number_of_philosophers)
 		pthread_join(progdata->thread[i++], NULL);
+	pthread_join(progdata->marx, NULL);
 }
 
 /*
