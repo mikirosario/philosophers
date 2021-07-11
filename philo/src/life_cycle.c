@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 06:22:41 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/11 06:55:50 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 	msg2 = "]) in unlock_forks\n";
 	if (progdata->philosopher[id].hasfork1)
 	{
+		pthread_mutex_lock(&progdata->rollcall);
+		progdata->free_forks++;
+		pthread_mutex_unlock(&progdata->rollcall);
 		if (pthread_mutex_unlock(&progdata->forks[fork1]))
 		{
 			pthread_mutex_lock(&progdata->printlock);
@@ -70,6 +73,9 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 	}
 	if (progdata->philosopher[id].hasfork2)
 	{
+		pthread_mutex_lock(&progdata->rollcall);
+		progdata->free_forks++;
+		pthread_mutex_unlock(&progdata->rollcall);
 		if (pthread_mutex_unlock(&progdata->forks[fork2]))
 		{
 			pthread_mutex_lock(&progdata->printlock);
@@ -130,7 +136,7 @@ int		ration_card(int id, t_progdata *progdata)
 		if (ration_card % progdata->number_of_philosophers == id)
 		{
 			pthread_mutex_lock(&progdata->rollcall);
-			progdata->free_forks--;
+			progdata->free_forks -= 2;
 			pthread_mutex_unlock(&progdata->rollcall);
 			return (1);
 		}
