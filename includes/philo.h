@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/11 00:38:28 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/11 04:21:50 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int		setup(t_progdata *progdata, int argc, char **argv);
 ** Life Cycle
 */
 
+void	*communism(void *progdata);
 int		identify_self(t_progdata *progdata);
 void	identify_forks(int id, t_progdata *progdata);
 void	inform(char *msg, int id, t_progdata *progdata);

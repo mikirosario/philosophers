@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_lib.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 00:38:07 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/11 04:48:34 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,14 @@ typedef struct s_progdata
 	char					gotforksem;
 	char					stop;
 
+	//republica populimpar
+	pthread_t				marx;
+	pthread_mutex_t			rollcall;
+	int						ration_card;
+	int						free_forks;
+	int						comrades_present;
+	int						max_concurrent_eaters;
+	char					gotrollcall;
 	//experimentos
 	char					gotwaiter;
 	pthread_mutex_t			waiter[2];

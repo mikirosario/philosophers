@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 00:31:57 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/11 05:34:32 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,27 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 ** If the philosopher successfully thinks, we return 1.
 */
 
+
+int		ration_card(int id, t_progdata *progdata)
+{
+	int		ration_card = progdata->ration_card;
+	size_t	i;
+
+	i = progdata->max_concurrent_eaters;
+	while (i--)
+	{
+		if (ration_card % progdata->number_of_philosophers == id)
+		{
+			pthread_mutex_lock(&progdata->rollcall);
+			progdata->free_forks--;
+			pthread_mutex_unlock(&progdata->rollcall);
+			return (1);
+		}
+		ration_card += 2;
+	}
+	return (0);
+}
+
 char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 {
 	int	fork1;
@@ -128,10 +149,14 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
+	while (progdata->ration_card == -1)
+		usleep(50);
 	if (one_philosopher(id, last_meal, progdata))
 		return (0);
 	if (is_dead(progdata, last_meal, id))
 		return (0);
+	while (!ration_card(id, progdata))
+		usleep(50);
 	pthread_mutex_lock(&progdata->forks[fork1]);
 	progdata->philosopher[id].hasfork1 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
@@ -177,7 +202,7 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	inform(GRN"is eating"RESET, id, progdata);
 	if (progdata->argc == 6)
 		progdata->philosopher[id].times_ate++;
-	pl_usleep(progdata->usec_time_to_eat);
+	pl_usleep(progdata->usec_time_to_eat + 5000);
 	progdata->philosopher[id].eating = 0;
 	unlock_forks(fork1, fork2, id, progdata);
 	return (1);
@@ -257,6 +282,9 @@ void	*life_cycle(void *progdata)
 	if (id % 2 == 0)
 		pdata->philosopher[id].even = 1;
 	identify_forks(id, progdata);
+	pthread_mutex_lock(&pdata->rollcall);
+	pdata->comrades_present++;
+	pthread_mutex_unlock(&pdata->rollcall);
 	last_meal = pl_get_time_msec();
 	while (1)
 	{

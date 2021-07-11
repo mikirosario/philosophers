@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 00:36:52 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/11 04:36:44 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,14 @@ int	thread_init(int number_of_philosophers, t_progdata *progdata)
 		return (iamerror(MALLOC_ERR, "thread_init"));
 	i = 0;
 	progdata->time_start = pl_get_time_msec();
+	progdata->ration_card = -1;
+	progdata->free_forks = progdata->number_of_forks;
+	if (pthread_create(&progdata->marx, NULL, communism, progdata))
+		return (iamerror(PTHREAD_CREAT_ERR, "thread_init"));
 	while (i < (size_t)number_of_philosophers)
 		if (pthread_create(&progdata->thread[i++], NULL, life_cycle, progdata))
 			return (iamerror(PTHREAD_CREAT_ERR, "thread_init"));
+	
 	return (1);
 }
 
@@ -129,6 +134,10 @@ int	philo_init(int number_of_philosophers, t_progdata *progdata)
 		return (iamerror(PTHREAD_MUTEX_INIT_ERR, "philo_init"));
 	else
 		progdata->gotprintlock = 1;
+	if (pthread_mutex_init(&progdata->rollcall, NULL))
+		return (iamerror(PTHREAD_MUTEX_INIT_ERR, "philo_init"));
+	else
+		progdata->gotrollcall = 1;
 	progdata->usec_time_to_eat = progdata->time_to_eat * 1000;
 	progdata->usec_time_to_sleep = progdata->time_to_sleep * 1000;
 	progdata->usec_time_to_die = progdata->time_to_die * 1000;

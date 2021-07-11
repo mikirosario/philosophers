@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 00:23:25 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/11 04:33:55 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ void	freeme(t_progdata *progdata)
 	if (progdata->gotprintlock)
 		if (pthread_mutex_destroy(&progdata->printlock))
 			printf("Failed pthread_mutex_destroy call on printlock in freeme\n");
+	if (progdata->gotrollcall)
+		if (pthread_mutex_destroy(&progdata->rollcall))
+			printf("Failed pthread_mutex_destroy call on rollcall in freeme\n");
 	if (progdata->gotwaiter)
 		if (pthread_mutex_destroy(&progdata->waiter[0]) || pthread_mutex_destroy(&progdata->waiter[1]))
 			printf("Failed pthread_mutex_destroy call on waiter in freeme\n");
