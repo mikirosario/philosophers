@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/11 04:16:36 by miki              #+#    #+#             */
-/*   Updated: 2021/07/12 02:21:18 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/12 02:32:05 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ void	*communism(void *progdata)
 			{
 			}
 		pdata->ration_card = ration;
-		usleep(600);
+		usleep(100);
 		//Marx calcula la actualización de la ration card.
 		//
 		//Marx espera a que vuelvan a estar todos lo tenedores disponibles.

@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/12 02:24:52 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/12 02:31:43 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
-	usleep(900);
+	usleep(150);
 	// while (progdata->free_forks == progdata->number_of_forks && !progdata->stop && progdata->ration_card > -1)
 	// 	usleep(10);
 	while (progdata->ration_card == -1)
@@ -169,7 +169,7 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 		return (0);
 	while (!ration_card(id, progdata) && !progdata->stop)
 	{
-		usleep(60);
+		usleep(10);
 		// struct timeval tmp;
 		// long long unsigned int timestamp_old;
 		// gettimeofday(&tmp, NULL);
