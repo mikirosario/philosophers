@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 06:55:50 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/12 02:24:52 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,10 @@ t_progdata *progdata)
 
 /*
 ** This function simply unlocks the philosopher's forks if the philosopher has
-** locked them. If an unlock fails, we notify the user.
+** locked them. If an unlock fails, we notify the user. We also inform Comrade
+** Karl Marx that the forks are available again. Comrade Marx will give the next
+** group at the table permission to eat when he sees all forks have been
+** returned.
 **
 ** The special printf style is brought to you by norminette. ;)
 */
@@ -60,9 +63,9 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 	msg2 = "]) in unlock_forks\n";
 	if (progdata->philosopher[id].hasfork1)
 	{
-		pthread_mutex_lock(&progdata->rollcall);
+		pthread_mutex_lock(&progdata->kremlock);
 		progdata->free_forks++;
-		pthread_mutex_unlock(&progdata->rollcall);
+		pthread_mutex_unlock(&progdata->kremlock);
 		if (pthread_mutex_unlock(&progdata->forks[fork1]))
 		{
 			pthread_mutex_lock(&progdata->printlock);
@@ -73,9 +76,9 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 	}
 	if (progdata->philosopher[id].hasfork2)
 	{
-		pthread_mutex_lock(&progdata->rollcall);
+		pthread_mutex_lock(&progdata->kremlock);
 		progdata->free_forks++;
-		pthread_mutex_unlock(&progdata->rollcall);
+		pthread_mutex_unlock(&progdata->kremlock);
 		if (pthread_mutex_unlock(&progdata->forks[fork2]))
 		{
 			pthread_mutex_lock(&progdata->printlock);
@@ -135,9 +138,9 @@ int		ration_card(int id, t_progdata *progdata)
 	{
 		if (ration_card % progdata->number_of_philosophers == id)
 		{
-			pthread_mutex_lock(&progdata->rollcall);
+			pthread_mutex_lock(&progdata->kremlock);
 			progdata->free_forks -= 2;
-			pthread_mutex_unlock(&progdata->rollcall);
+			pthread_mutex_unlock(&progdata->kremlock);
 			return (1);
 		}
 		ration_card += 2;
@@ -155,17 +158,27 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
+	usleep(900);
+	// while (progdata->free_forks == progdata->number_of_forks && !progdata->stop && progdata->ration_card > -1)
+	// 	usleep(10);
 	while (progdata->ration_card == -1)
 		usleep(50);
 	if (one_philosopher(id, last_meal, progdata))
 		return (0);
-	//if (is_dead(progdata, last_meal, id))
-	//	return (0);
+	if (is_dead(progdata, last_meal, id))
+		return (0);
 	while (!ration_card(id, progdata) && !progdata->stop)
 	{
-		usleep(50);
-		//if (is_dead(progdata, last_meal, id))
-		//	return (0);
+		usleep(60);
+		// struct timeval tmp;
+		// long long unsigned int timestamp_old;
+		// gettimeofday(&tmp, NULL);
+		// timestamp_old = pl_timeval_to_usec(&tmp);
+		// usleep(60);
+		// gettimeofday(&tmp, NULL);
+		// pthread_mutex_lock(&progdata->printlock);
+		// printf("Diff: %llu\n", pl_timeval_to_usec(&tmp) - timestamp_old);
+		// pthread_mutex_unlock(&progdata->printlock);
 	}
 	if (is_dead(progdata, last_meal, id))
 		return (0);
@@ -294,9 +307,9 @@ void	*life_cycle(void *progdata)
 	if (id % 2 == 0)
 		pdata->philosopher[id].even = 1;
 	identify_forks(id, progdata);
-	pthread_mutex_lock(&pdata->rollcall);
+	pthread_mutex_lock(&pdata->kremlock);
 	pdata->comrades_present++;
-	pthread_mutex_unlock(&pdata->rollcall);
+	pthread_mutex_unlock(&pdata->kremlock);
 	last_meal = pl_get_time_msec();
 	while (1)
 	{
