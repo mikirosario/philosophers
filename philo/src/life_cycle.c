@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 14:33:34 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 15:18:10 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,9 +138,7 @@ int		ration_card(int id, t_progdata *progdata)
 	{
 		if (ration_card % progdata->number_of_philosophers == id)
 		{
-			pthread_mutex_lock(&progdata->kremlock);
-			progdata->free_forks -= 2;
-			pthread_mutex_unlock(&progdata->kremlock);
+
 			return (1);
 		}
 		ration_card += 2;
@@ -170,11 +168,17 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork1]);
+	pthread_mutex_lock(&progdata->kremlock);
+	progdata->free_forks--;
+	pthread_mutex_unlock(&progdata->kremlock);
 	progdata->philosopher[id].hasfork1 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork2]);
+	pthread_mutex_lock(&progdata->kremlock);
+	progdata->free_forks--;
+	pthread_mutex_unlock(&progdata->kremlock);
 	progdata->philosopher[id].hasfork2 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	return (1);
