@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/12 00:28:10 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 14:55:35 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,6 @@ long long unsigned int	pl_timeval_to_usec(struct timeval *time);
 long long unsigned int	pl_get_time_msec(void);
 int						pl_strcmp(const char *s1, const char *s2);
 void					pl_usleep(long long unsigned int wait);
+unsigned int			pl_mod(int dividend, unsigned int divisor);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/12 02:40:42 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 14:33:34 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,9 +158,6 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
-	usleep(400);
-	// while (progdata->free_forks == progdata->number_of_forks && !progdata->stop && progdata->ration_card > -1)
-	// 	usleep(10);
 	while (progdata->ration_card == -1)
 		usleep(50);
 	if (one_philosopher(id, last_meal, progdata))
@@ -169,16 +166,6 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 		return (0);
 	while (!ration_card(id, progdata) && !progdata->stop)
 	{
-		usleep(50);
-		// struct timeval tmp;
-		// long long unsigned int timestamp_old;
-		// gettimeofday(&tmp, NULL);
-		// timestamp_old = pl_timeval_to_usec(&tmp);
-		// usleep(60);
-		// gettimeofday(&tmp, NULL);
-		// pthread_mutex_lock(&progdata->printlock);
-		// printf("Diff: %llu\n", pl_timeval_to_usec(&tmp) - timestamp_old);
-		// pthread_mutex_unlock(&progdata->printlock);
 	}
 	if (is_dead(progdata, last_meal, id))
 		return (0);

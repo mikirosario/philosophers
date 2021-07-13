@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/11 04:16:36 by miki              #+#    #+#             */
-/*   Updated: 2021/07/12 02:40:01 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 14:58:35 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ void	*communism(void *progdata)
 	//a comer!!!!
 	while (!pdata->stop)
 	{
+		//ration = pl_mod(--ration, pdata->number_of_philosophers);
 		if (ration > 0)
 			ration--;
 		else
@@ -137,46 +138,32 @@ void	*communism(void *progdata)
 			{
 			}
 		pdata->ration_card = ration;
-		usleep(100);
+		usleep(50);
 		//Marx calcula la actualización de la ration card.
 		//
 		//Marx espera a que vuelvan a estar todos lo tenedores disponibles.
 		//
 		//Marx actualiza ration card. Marx debe esperar a que el primer miembro
 		//del grupo se dé cuenta y coja sus tenedores antes de volver a mirar
-		//el estado de los tenedores. Le da ~100 microsegundos, y cada miembro
-		//del grupo comprueba su ration card cada ~50 microsegundos.
+		//el estado de los tenedores. Marx espera ~50 microsegundos. Cada miembro
+		//del grupo comprueba su ration card continuamente, así que todos salen
+		//a comer casi al mismo tiempo, por lo que deberían terminar de comer también
+		//casi al mismo tiempo y volver a mirar su ration card casi al mismo tiempo.
 		//
-		//Marx DEBE llegar a comprobar los tenedores antes de que los que están
+		//Marx DEBE llegar a mirar los tenedores antes de que los que están
 		//comiendo vuelvan a mirar su ration card, y todos los del grupo DEBEN haber
 		//terminado su comida antes de que el primero vuelva a mirar su ration card
-		//para que no vuelva a comer.
+		//para que no vuelvan a comer los mismos. Como todos miran su ration card
+		//continuamente mientras esperan empiezan a comer con muy poca diferencia
+		//entre sí, y también acaban con muy poca diferencia (variaría en función
+		//del ordenador, pero del orden de unos ciclos de la CPU).
 		//
-		//En el peor caso el primer miembro de un grupo tardará ~50 microsegundos en
-		//coger su tenedor y Marx habrá esperado ~50 de sus ~100 microsegundos y le
-		//quedarán por esperar ~50 microsegundos. En el mejor caso no tardará nada y
-		//a Marx le quedarán por esperar ~100 microsegundos.
-		//
-		//Cada miembro del grupo debe pasar al menos ~200 microsegundos pensando
-		//antes de volver a comprobar su ration card para darle tiempo a Marx a
-		//volver a mirar los tenedores y actualizar la ration card para el siguiente
-		//grupo.
-		//
-		//En el mejor caso (cogen su tenedor de inmediato, time_to_eat = 0,
-		//time_to_sleep = 0) volverán a pensar de inmediato y a Marx le quedarán 100
-		//microsegundos de espera, pero ellos deberán pensar ~400 microsegundos, así
-		//que Marx llegará a hacer su comprobación ~300 microsegundos antes de que
-		//lleguen. En el peor caso (cogen su tenedor con ~50 microsegundos de demora,
-		//time_to_eat = 0, time_to_sleep = 0) volverán a pensar con ~50 microsegundos
-		//de demora y a Marx le quedarán 50 microsegundos de espera, pero ellos deberán
-		//pensar ~400 microsegundos, así que Marx llegará a hacer su comprobación ~350
-		//microsegundos antes de que lleguen.
-		//
-		//Cada miembro empieza a comer como mucho con ~50 microsegundos de diferencia
-		//los unos de los otros, por lo que todos deben terminar de comer con ~50
-		//microsegundos de diferencia, dejándole a Marx entre ~50 y ~60 microsegundos
-		//de margen para darse cuenta y actualizar la ration card antes de que ninguno
-		//vuelva a mirarla.
+		//Marx duerme ~50 microsegundos después de cambiar la ration card y dar la
+		//señal de comer, pero el mínimo tiempo para dormir y para comer de un filósofo
+		//es de 60 milisegundos (6000 * 2 = 12000 microsegundos). Marx, por lo tanto,
+		//siempre vuelve a mirar los tenedores antes de que vuelvan los filósofos a
+		//mirar su ration card, y le da tiempo de sobra cuando devuelvan sus tenedores
+		//a señalar al grupo siguiente.
 	}
 	return (NULL);
 }
