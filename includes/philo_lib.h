@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 14:55:35 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 17:29:09 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct s_progdata
 	int						comrades_present;
 	int						max_concurrent_eaters;
 	char					gotkremlock;
+	char					odd_num_philosophers;
 	//experimentos
 	char					gotwaiter;
 	pthread_mutex_t			waiter[2];

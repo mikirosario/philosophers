@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/12 00:23:20 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 17:44:13 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,12 @@ int	fork_init(int number_of_forks, t_progdata *progdata)
 int	thread_init(int number_of_philosophers, t_progdata *progdata)
 {
 	size_t		i;
+	void		*(*life_cycle)(void *);
 
+	if (progdata->odd_num_philosophers)
+		life_cycle = odd_life_cycle;
+	else
+		life_cycle = even_life_cycle;
 	progdata->thread = malloc(number_of_philosophers * sizeof(pthread_t));
 	if (progdata->thread == NULL)
 		return (iamerror(MALLOC_ERR, "thread_init"));
@@ -138,5 +143,7 @@ int	philo_init(int number_of_philosophers, t_progdata *progdata)
 	progdata->usec_time_to_eat = progdata->time_to_eat * 1000;
 	progdata->usec_time_to_sleep = progdata->time_to_sleep * 1000;
 	progdata->usec_time_to_die = progdata->time_to_die * 1000;
+	if (progdata->number_of_philosophers % 2)
+		progdata->odd_num_philosophers = 1;
 	return (1);
 }

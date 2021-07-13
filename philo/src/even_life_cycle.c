@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   life_cycle.c                                       :+:      :+:    :+:   */
+/*   even_life_cycle.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 17:47:28 by miki             ###   ########.fr       */
+/*   Created: 2021/07/13 17:32:52 by miki              #+#    #+#             */
+/*   Updated: 2021/07/13 17:47:42 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
 
 /*
 ** This function checks whether there is only one philosopher. If there is only
@@ -54,46 +55,34 @@ t_progdata *progdata)
 ** The special printf style is brought to you by norminette. ;)
 */
 
-void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
-{
-	char	*msg1;
-	char	*msg2;
+// static void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
+// {
+// 	char	*msg1;
+// 	char	*msg2;
 
-	msg1 = "Failed pthread_mutex_unlock(fork[";
-	msg2 = "]) in unlock_forks\n";
-	if (progdata->philosopher[id].hasfork1)
-	{
-		if (progdata->odd_num_philosophers)
-		{
-			pthread_mutex_lock(&progdata->kremlock);
-			progdata->free_forks++;
-			pthread_mutex_unlock(&progdata->kremlock);
-		}
-		if (pthread_mutex_unlock(&progdata->forks[fork1]))
-		{
-			pthread_mutex_lock(&progdata->printlock);
-			printf(RED"%s%d%s"RESET, msg1, fork1, msg2);
-			pthread_mutex_unlock(&progdata->printlock);
-		}
-		progdata->philosopher[id].hasfork1 = 0;
-	}
-	if (progdata->philosopher[id].hasfork2)
-	{
-		if (progdata->odd_num_philosophers)
-		{
-			pthread_mutex_lock(&progdata->kremlock);
-			progdata->free_forks++;
-			pthread_mutex_unlock(&progdata->kremlock);
-		}
-		if (pthread_mutex_unlock(&progdata->forks[fork2]))
-		{
-			pthread_mutex_lock(&progdata->printlock);
-			printf(RED"%s%d%s"RESET, msg1, fork2, msg2);
-			pthread_mutex_unlock(&progdata->printlock);
-		}
-		progdata->philosopher[id].hasfork2 = 0;
-	}
-}
+// 	msg1 = "Failed pthread_mutex_unlock(fork[";
+// 	msg2 = "]) in unlock_forks\n";
+// 	if (progdata->philosopher[id].hasfork1)
+// 	{
+// 		if (pthread_mutex_unlock(&progdata->forks[fork1]))
+// 		{
+// 			pthread_mutex_lock(&progdata->printlock);
+// 			printf(RED"%s%d%s"RESET, msg1, fork1, msg2);
+// 			pthread_mutex_unlock(&progdata->printlock);
+// 		}
+// 		progdata->philosopher[id].hasfork1 = 0;
+// 	}
+// 	if (progdata->philosopher[id].hasfork2)
+// 	{
+// 		if (pthread_mutex_unlock(&progdata->forks[fork2]))
+// 		{
+// 			pthread_mutex_lock(&progdata->printlock);
+// 			printf(RED"%s%d%s"RESET, msg1, fork2, msg2);
+// 			pthread_mutex_unlock(&progdata->printlock);
+// 		}
+// 		progdata->philosopher[id].hasfork2 = 0;
+// 	}
+// }
 
 /*
 ** Each philosopher is seated in a circle with a fork to its left and right.
@@ -168,23 +157,12 @@ static char	think(int id, long long unsigned int *last_meal, t_progdata *progdat
 		return (0);
 	if (is_dead(progdata, last_meal, id))
 		return (0);
-	while (!ration_card(id, progdata) && !progdata->stop)
-	{
-	}
-	if (is_dead(progdata, last_meal, id))
-		return (0);
 	pthread_mutex_lock(&progdata->forks[fork1]);
-	pthread_mutex_lock(&progdata->kremlock);
-	progdata->free_forks--;
-	pthread_mutex_unlock(&progdata->kremlock);
 	progdata->philosopher[id].hasfork1 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork2]);
-	pthread_mutex_lock(&progdata->kremlock);
-	progdata->free_forks--;
-	pthread_mutex_unlock(&progdata->kremlock);
 	progdata->philosopher[id].hasfork2 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	return (1);
@@ -293,7 +271,7 @@ static char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 ** Otherwise, we enter sleeping mode and loop back to thinking.
 */
 
-void	*odd_life_cycle(void *progdata)
+void	*even_life_cycle(void *progdata)
 {
 	int						id;
 	t_progdata				*pdata;			

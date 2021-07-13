@@ -6,7 +6,7 @@
 #    By: miki <miki@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/05 20:32:49 by miki              #+#    #+#              #
-#    Updated: 2021/07/11 05:35:12 by miki             ###   ########.fr        #
+#    Updated: 2021/07/13 17:41:37 by miki             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,8 @@ P1SRC = ./$(NAME)/src/
 PBSRC = ./$(BONUS)/src/
 
 P1FILES = $(P1SRC)main.c $(P1SRC)philo_init.c $(P1SRC)iamerror.c \
-$(P1SRC)life_cycle.c $(P1SRC)self_identification.c $(P1SRC)is_functions.c \
+$(P1SRC)life_cycle.c $(P1SRC)even_life_cycle.c $(P1SRC)self_identification.c \
+$(P1SRC)is_functions.c \
 $(P1SRC)inform.c $(P1SRC)setup.c $(P1SRC)marx.c
 
 PBFILES = $(PBSRC)main_bonus.c  $(PBSRC)philo_init_bonus.c $(PBSRC)inform_bonus.c \

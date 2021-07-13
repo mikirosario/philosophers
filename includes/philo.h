@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/11 04:21:50 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 17:41:01 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int		setup(t_progdata *progdata, int argc, char **argv);
 */
 
 void	*communism(void *progdata);
+int		ration_card(int id, t_progdata *progdata);
 int		identify_self(t_progdata *progdata);
 void	identify_forks(int id, t_progdata *progdata);
 void	inform(char *msg, int id, t_progdata *progdata);
@@ -62,6 +63,7 @@ char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, \
 		int id);
 char	is_full(t_progdata *progdata, int id);
 void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata);
-void	*life_cycle(void *progdata);
+void	*even_life_cycle(void *progdata);
+void	*odd_life_cycle(void *progdata);
 
 #endif
