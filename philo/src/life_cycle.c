@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 17:47:28 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 18:28:48 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,10 +141,15 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 ** neighbours hogging all its food in every instance.
 **
 ** To resolve this problem I've turned to COMMUNISM. An extra thread will run
-** the marx function. The marx function forces all philosophers to eat in
-** alternating groups of a size determined by the maximum number of concurrent
-** eaters. It does this by issuing a ration card that each philosopher can use
-** to confirm whether it is or is not part of the group that is allowed to eat.
+** the marx function. When the number of philosophers is odd, the marx function
+** forces all philosophers to eat in alternating groups of a size determined by
+** the maximum number of concurrent eaters. It does this by issuing a ration
+** card that each philosopher can use to confirm whether it is or is not part of
+** the group that is allowed to eat. It also forces all philosophers to begin
+** eating at the same time. When the number of philosophers is even, anarchy
+** reigns supreme. For reasons I don't quite understand, the evens seem to
+** perform better with anarchy, while the odds prefer communism. O_O So I've
+** adopted a one-project two-systems approach. :p
 **
 ** When a philosopher takes its fork, it decrements the free_forks variable that
 ** the marx function checks continuously. When all forks are returned to the

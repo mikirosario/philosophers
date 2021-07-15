@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/11 04:16:36 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 17:48:55 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 17:55:33 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,8 @@ void	*communism(void *progdata)
 	ration = 1;
 	//espera a los comensales
 	while (pdata->comrades_present != pdata->number_of_philosophers)
-		usleep(50);
+		{
+		}
 	//a comer!!!!
 	if (pdata->odd_num_philosophers)
 		while (!pdata->stop)

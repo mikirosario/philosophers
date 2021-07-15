@@ -6,7 +6,7 @@
 /*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 17:32:52 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 17:47:42 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/13 18:28:28 by miki             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,18 +127,19 @@ t_progdata *progdata)
 ** a precession issue. In an odd number of philosophers there is always one more
 ** even philosopher than odd philosophers. Since this philosopher has both an
 ** odd AND an even neighbour, this extra philosopher can be starved by its
-** neighbours hogging all its food in every instance.
+** neighbours hogging all its food in every instance. To avoid this we need to
+** precess through groups of philosophers.
 **
 ** To resolve this problem I've turned to COMMUNISM. An extra thread will run
-** the marx function. The marx function forces all philosophers to eat in
-** alternating groups of a size determined by the maximum number of concurrent
-** eaters. It does this by issuing a ration card that each philosopher can use
-** to confirm whether it is or is not part of the group that is allowed to eat.
-**
-** When a philosopher takes its fork, it decrements the free_forks variable that
-** the marx function checks continuously. When all forks are returned to the
-** table, the marx function signals the next group to begin eating while the
-** previous group is sleeping.
+** the marx function. When the number of philosophers is odd, the marx function
+** forces all philosophers to eat in alternating groups of a size determined by
+** the maximum number of concurrent eaters. It does this by issuing a ration
+** card that each philosopher can use to confirm whether it is or is not part of
+** the group that is allowed to eat. It also forces all philosophers to begin
+** eating at the same time. When the number of philosophers is even, anarchy
+** reigns supreme. For reasons I don't quite understand, the evens seem to
+** perform better with anarchy, while the odds prefer communism. O_O So I've
+** adopted a one-project two-systems approach. :p
 */
 
 static char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
@@ -152,7 +153,8 @@ static char	think(int id, long long unsigned int *last_meal, t_progdata *progdat
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
 	while (progdata->ration_card == -1)
-		usleep(50);
+		{
+		}
 	if (one_philosopher(id, last_meal, progdata))
 		return (0);
 	if (is_dead(progdata, last_meal, id))
