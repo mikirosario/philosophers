@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   marx.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/11 04:16:36 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 17:55:33 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/22 00:18:11 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,10 +245,10 @@ void	*communism(void *progdata)
 		}
 	//a comer!!!!
 	if (pdata->odd_num_philosophers)
-		while (!pdata->stop)
+		while (!pdata->stop/* && !pdata->all_full*/)
 		{
 			ration = pl_mod(--ration, pdata->number_of_philosophers);
-			while (pdata->free_forks != pdata->number_of_forks && !pdata->stop)
+			while (pdata->free_forks != pdata->number_of_forks && !pdata->stop/* && !pdata->all_full*/)
 				{
 				}
 			pdata->ration_card = ration;

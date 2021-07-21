@@ -3,14 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 18:28:48 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/22 00:16:00 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+char	all_full(t_progdata *progdata, int id)
+{
+	// pthread_mutex_lock(&progdata->printlock);
+	// printf("Times %d ate: %d\n", id, progdata->philosopher[id].times_ate);
+	// pthread_mutex_unlock(&progdata->printlock);
+	if (progdata->all_full)
+	{
+		unlock_forks(progdata->philosopher[id].fork1, \
+		progdata->philosopher[id].fork2, id, progdata);
+		return (1);
+	}
+	return (0);
+}
 
 /*
 ** This function checks whether there is only one philosopher. If there is only
@@ -171,12 +185,12 @@ static char	think(int id, long long unsigned int *last_meal, t_progdata *progdat
 		usleep(50);
 	if (one_philosopher(id, last_meal, progdata))
 		return (0);
-	if (is_dead(progdata, last_meal, id))
+	if (is_dead(progdata, last_meal, id) || all_full(progdata, id))
 		return (0);
 	while (!ration_card(id, progdata) && !progdata->stop)
 	{
 	}
-	if (is_dead(progdata, last_meal, id))
+	if (is_dead(progdata, last_meal, id) || all_full(progdata, id))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork1]);
 	pthread_mutex_lock(&progdata->kremlock);
@@ -184,7 +198,7 @@ static char	think(int id, long long unsigned int *last_meal, t_progdata *progdat
 	pthread_mutex_unlock(&progdata->kremlock);
 	progdata->philosopher[id].hasfork1 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
-	if (is_dead(progdata, last_meal, id))
+	if (is_dead(progdata, last_meal, id) || all_full(progdata, id))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork2]);
 	pthread_mutex_lock(&progdata->kremlock);
@@ -224,8 +238,9 @@ static char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	fork1 = (progdata->philosopher[id]).fork1;
 	fork2 = (progdata->philosopher[id]).fork2;
 	progdata->philosopher[id].eating = 1;
-	if (is_dead(progdata, last_meal, id) || is_full(progdata, id))
+	if (is_dead(progdata, last_meal, id) || all_full(progdata, id))
 		return (0);
+	//printf("DID THIS: %d\n", id);
 	inform(GRN"is eating"RESET, id, progdata);
 	if (progdata->argc == 6)
 		progdata->philosopher[id].times_ate++;
@@ -316,7 +331,7 @@ void	*odd_life_cycle(void *progdata)
 	while (1)
 	{
 		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
-		|| is_dead(progdata, &last_meal, id) || is_full(progdata, id))
+		|| is_dead(progdata, &last_meal, id) || all_full(progdata, id))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->usec_time_to_sleep);
