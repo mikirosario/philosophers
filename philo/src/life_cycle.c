@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/13 18:28:48 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/22 01:00:59 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,9 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 	msg2 = "]) in unlock_forks\n";
 	if (progdata->philosopher[id].hasfork1)
 	{
-		if (progdata->odd_num_philosophers)
-		{
-			pthread_mutex_lock(&progdata->kremlock);
-			progdata->free_forks++;
-			pthread_mutex_unlock(&progdata->kremlock);
-		}
+		pthread_mutex_lock(&progdata->kremlock);
+		progdata->free_forks++;
+		pthread_mutex_unlock(&progdata->kremlock);
 		if (pthread_mutex_unlock(&progdata->forks[fork1]))
 		{
 			pthread_mutex_lock(&progdata->printlock);
@@ -79,12 +76,9 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 	}
 	if (progdata->philosopher[id].hasfork2)
 	{
-		if (progdata->odd_num_philosophers)
-		{
-			pthread_mutex_lock(&progdata->kremlock);
-			progdata->free_forks++;
-			pthread_mutex_unlock(&progdata->kremlock);
-		}
+		pthread_mutex_lock(&progdata->kremlock);
+		progdata->free_forks++;
+		pthread_mutex_unlock(&progdata->kremlock);
 		if (pthread_mutex_unlock(&progdata->forks[fork2]))
 		{
 			pthread_mutex_lock(&progdata->printlock);
