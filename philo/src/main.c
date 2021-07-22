@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/12 00:23:20 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/22 01:21:32 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,10 @@ int	main(int argc, char **argv)
 				i = 0;
 		if ((&progdata.philosopher[i])->died)
 			hemlock(&progdata);
+		else
+		{
+			progdata.all_full = 1;
+		}
 		tjoin(&progdata);
 	}
 	freeme(&progdata);

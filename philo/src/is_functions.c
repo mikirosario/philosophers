@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_functions.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/11 06:23:01 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/21 23:39:24 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ char	starved(t_progdata *progdata, long long unsigned int *last_meal, int id)
 
 char	is_full(t_progdata *progdata, int id)
 {
-	if (progdata->argc == 6 && (&progdata->philosopher[id])->times_ate == \
+	if (progdata->argc == 6 && (&progdata->philosopher[id])->times_ate >= \
 	progdata->number_of_times_each_philosopher_must_eat)
 	{
-		unlock_forks(progdata->philosopher[id].fork1, \
-		progdata->philosopher[id].fork2, id, progdata);
+		// unlock_forks(progdata->philosopher[id].fork1,
+		// progdata->philosopher[id].fork2, id, progdata);
 		return (1);
 	}
 	return (0);

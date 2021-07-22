@@ -6,13 +6,11 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/11 04:16:36 by miki              #+#    #+#             */
-/*   Updated: 2021/07/22 01:06:37 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/22 05:44:53 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-
 
 /*
 ** This function will determine whether the id passed as id is part of the group
@@ -62,7 +60,7 @@
 ** returned. Otherwise, 0 is returned.
 */
 
-int		ration_card(int id, t_progdata *progdata)
+int	ration_card(int id, t_progdata *progdata)
 {
 	int		ration_card = progdata->ration_card;
 	size_t	i;
