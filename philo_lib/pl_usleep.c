@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pl_usleep.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miki <miki@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 01:56:58 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/10 14:22:31 by miki             ###   ########.fr       */
+/*   Updated: 2021/07/24 01:02:58 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,7 @@ void	pl_usleep(long long unsigned int wait)
 	time_end = pl_timeval_to_usec(&timestamp) + wait;
 	while (!gettimeofday(&timestamp, NULL) && \
 	(pl_timeval_to_usec(&timestamp) < time_end))
-		usleep(50);
+	{
+	}
+		//usleep(100);
 }
