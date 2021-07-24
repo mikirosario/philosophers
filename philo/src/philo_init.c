@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 00:36:52 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 04:42:10 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,17 +99,6 @@ int	thread_init(int number_of_philosophers, t_progdata *progdata)
 ** returned. Otherwise, 1 is returned.
 */
 
-// int	waiter_init(t_progdata *progdata)
-// {
-// 	if (pthread_mutex_init(&progdata->waiter[0], NULL))
-// 		return (iamerror(PTHREAD_MUTEX_INIT_ERR, "philo_init"));
-// 	else if (pthread_mutex_init(&progdata->waiter[1], NULL))
-// 		return (iamerror(PTHREAD_MUTEX_INIT_ERR, "philo_init"));
-// 	else
-// 		progdata->gotwaiter = 1;
-// 	return (1);
-// }
-
 int	philo_init(int number_of_philosophers, t_progdata *progdata)
 {
 	size_t	i;
@@ -129,8 +118,5 @@ int	philo_init(int number_of_philosophers, t_progdata *progdata)
 		return (iamerror(PTHREAD_MUTEX_INIT_ERR, "philo_init"));
 	else
 		progdata->gotprintlock = 1;
-	progdata->usec_time_to_eat = progdata->time_to_eat * 1000;
-	progdata->usec_time_to_sleep = progdata->time_to_sleep * 1000;
-	progdata->usec_time_to_die = progdata->time_to_die * 1000;
 	return (1);
 }

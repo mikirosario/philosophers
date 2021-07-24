@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 00:23:25 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 05:46:42 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,6 @@ void	freeme(t_progdata *progdata)
 	if (progdata->gotprintlock)
 		if (pthread_mutex_destroy(&progdata->printlock))
 			printf("Failed pthread_mutex_destroy call on printlock in freeme\n");
-	if (progdata->gotwaiter)
-		if (pthread_mutex_destroy(&progdata->waiter[0]) || pthread_mutex_destroy(&progdata->waiter[1]))
-			printf("Failed pthread_mutex_destroy call on waiter in freeme\n");
 	while (progdata->number_of_forks--)
 		if (pthread_mutex_destroy(progdata->forks + progdata->number_of_forks))
 			printf \
@@ -64,7 +61,8 @@ char	hungry_philosophers(t_progdata *progdata)
 
 	i = 0;
 	while (i < (size_t)progdata->number_of_philosophers)
-		if (!is_full(progdata, i++))
+		//if (!is_full(progdata, i++))
+		if (!progdata->philosopher[i++].full)
 			return (1);
 	return (0);
 }
@@ -90,10 +88,15 @@ void	hemlock(t_progdata *progdata)
 void	tjoin(t_progdata *progdata)
 {
 	size_t	i;
+	int		err;
 
 	i = 0;
 	while (i < (size_t)progdata->number_of_philosophers)
-		pthread_join(progdata->thread[i++], NULL);
+	{
+		err = pthread_join(progdata->thread[i++], NULL);
+		if (err)
+			printf("pthread_join error: %d\n", err);
+	}
 }
 
 /*

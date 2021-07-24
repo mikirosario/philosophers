@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/24 01:24:03 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 05:55:57 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,9 @@ char	is_full(t_progdata *progdata, int id)
 	if (progdata->argc == 6 && (&progdata->philosopher[id])->times_ate == \
 	progdata->number_of_times_each_philosopher_must_eat)
 	{
+		if (progdata->philosopher[id].eating)
+			pl_usleep(progdata->time_to_eat);
+		progdata->philosopher[id].full = 1;
 		unlock_forks(progdata->philosopher[id].fork1, \
 		progdata->philosopher[id].fork2, id, progdata);
 		return (1);
@@ -72,25 +75,28 @@ char	is_full(t_progdata *progdata, int id)
 ** died variable.
 **
 ** NOTE: The first starved philosopher will now flip the stop flag to mute the
-** other threads, per popular demand.
+** other threads, per popular demand. The 10 millisecond rule likewise only
+** applies to the starved philosopher, not the murdered ones.
 */
 
 char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
 {
 	long long unsigned int	time_of_death;
+	static char				first_death = 1;
 
 	if (starved(progdata, last_meal, id) || \
 	(&progdata->philosopher[id])->murdered)
 	{
-		time_of_death = pl_get_time_msec();
+		time_of_death = *last_meal + progdata->time_to_die;
 		inform(RED"died"RESET, id, progdata);
-		if (pl_get_time_msec() - time_of_death > 10)
+		if (first_death && pl_get_time_msec() - time_of_death > 10)
 		{
 			pthread_mutex_lock(&progdata->printlock);
 			printf(RED \
 			"Took more than 10 ms to inform of philosopher death\n"RESET);
 			pthread_mutex_unlock(&progdata->printlock);
 		}
+		first_death = 0;
 		(&progdata->philosopher[id])->died = 1;
 		unlock_forks(progdata->philosopher[id].fork1, \
 		progdata->philosopher[id].fork2, id, progdata);

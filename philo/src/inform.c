@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:43:36 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/10 22:25:20 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 05:52:58 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ void	inform(char *msg, int id, t_progdata *progdata)
 	{
 		printf("%llu %d"" %s\n", pl_get_time_msec() - progdata->time_start, \
 		id + 1, msg);
+		if (!pl_strcmp(msg, RED"died"RESET))
+			progdata->stop = 1;
 	}
-	if (!pl_strcmp(msg, RED"died"RESET))
-		progdata->stop = 1;
 	pthread_mutex_unlock(&progdata->printlock);
 }

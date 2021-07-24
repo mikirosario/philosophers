@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/11 00:38:07 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 05:41:10 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,8 @@ typedef struct s_philosopher
 	char					died;
 	char					murdered;
 	char					eating;
-	char					hasfork1;
-	char					hasfork2;
-
-	//experimentos
 	char					even;
+	char					full;
 }				t_philosopher;
 
 typedef struct s_progdata
@@ -46,9 +43,10 @@ typedef struct s_progdata
 	int						argc;
 	int						error;
 	int						bonus_uid;
-	long long int			usec_time_to_eat;
-	long long int			usec_time_to_sleep;
-	long long int			usec_time_to_die;
+	int						dinner_bell;
+	long long int			usec_time_to_eat; //obsoleto
+	long long int			usec_time_to_sleep; //obsoleto
+	long long int			usec_time_to_die; //obsoleto
 	long long unsigned int	time_start;
 	int						*deadchildren;
 	pid_t					*children;
@@ -56,7 +54,6 @@ typedef struct s_progdata
 	sem_t					*forksem;
 	sem_t					*waitersem;
 	sem_t					*printsem;
-	pthread_t				reaper;
 	pthread_t				*thread;
 	pthread_mutex_t			*forks;
 	t_philosopher			*philosopher;
@@ -68,10 +65,6 @@ typedef struct s_progdata
 	char					gotwaitersem;
 	char					gotforksem;
 	char					stop;
-
-	//experimentos
-	char					gotwaiter;
-	pthread_mutex_t			waiter[2];
 }				t_progdata;
 
 char					check_args(char **argv);
@@ -86,6 +79,6 @@ long long unsigned int	pl_timeval_to_msec(struct timeval *time);
 long long unsigned int	pl_timeval_to_usec(struct timeval *time);
 long long unsigned int	pl_get_time_msec(void);
 int						pl_strcmp(const char *s1, const char *s2);
-void					pl_usleep(long long unsigned int wait);
+void					pl_usleep(int wait);
 
 #endif

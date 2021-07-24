@@ -6,7 +6,7 @@
 /*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 01:43:18 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 05:52:58 by mrosario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_progdata *progdata)
 	fork2 = (progdata->philosopher[id]).fork2;
 	if (fork1 != fork2)
 		return (0);
-	pl_usleep(progdata->usec_time_to_die + 1000);
+	pl_usleep(progdata->time_to_die + 1);
 	is_dead(progdata, last_meal, id);
 	return (1);
 }
@@ -53,31 +53,34 @@ t_progdata *progdata)
 
 void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 {
-	char	*msg1;
-	char	*msg2;
+	// char	*msg1;
+	// char	*msg2;
 
-	msg1 = "Failed pthread_mutex_unlock(fork[";
-	msg2 = "]) in unlock_forks\n";
-	if (progdata->philosopher[id].hasfork1)
-	{
-		if (pthread_mutex_unlock(&progdata->forks[fork1]))
-		{
-			pthread_mutex_lock(&progdata->printlock);
-			printf(RED"%s%d%s"RESET, msg1, fork1, msg2);
-			pthread_mutex_unlock(&progdata->printlock);
-		}
-		progdata->philosopher[id].hasfork1 = 0;
-	}
-	if (progdata->philosopher[id].hasfork2)
-	{
-		if (pthread_mutex_unlock(&progdata->forks[fork2]))
-		{
-			pthread_mutex_lock(&progdata->printlock);
-			printf(RED"%s%d%s"RESET, msg1, fork2, msg2);
-			pthread_mutex_unlock(&progdata->printlock);
-		}
-		progdata->philosopher[id].hasfork2 = 0;
-	}
+(void)id;
+	// msg1 = "Failed pthread_mutex_unlock(fork[";
+	// msg2 = "]) in unlock_forks\n";
+	pthread_mutex_unlock(&progdata->forks[fork2]);
+	pthread_mutex_unlock(&progdata->forks[fork1]);
+	// if (progdata->philosopher[id].hasfork1)
+	// {
+	// 	if (pthread_mutex_unlock(&progdata->forks[fork1]))
+	// 	{
+	// 		pthread_mutex_lock(&progdata->printlock);
+	// 		printf(RED"%s%d%s"RESET, msg1, fork1, msg2);
+	// 		pthread_mutex_unlock(&progdata->printlock);
+	// 	}
+	// 	progdata->philosopher[id].hasfork1 = 0;
+	// }
+	// if (progdata->philosopher[id].hasfork2)
+	// {
+	// 	if (pthread_mutex_unlock(&progdata->forks[fork2]))
+	// 	{
+	// 		pthread_mutex_lock(&progdata->printlock);
+	// 		printf(RED"%s%d%s"RESET, msg1, fork2, msg2);
+	// 		pthread_mutex_unlock(&progdata->printlock);
+	// 	}
+	// 	progdata->philosopher[id].hasfork2 = 0;
+	// }
 }
 
 /*
@@ -133,12 +136,10 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork1]);
-	progdata->philosopher[id].hasfork1 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	if (is_dead(progdata, last_meal, id))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork2]);
-	progdata->philosopher[id].hasfork2 = 1;
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	return (1);
 }
@@ -177,7 +178,7 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	inform(GRN"is eating"RESET, id, progdata);
 	if (progdata->argc == 6)
 		progdata->philosopher[id].times_ate++;
-	pl_usleep(progdata->usec_time_to_eat);
+	pl_usleep(progdata->time_to_eat);
 	progdata->philosopher[id].eating = 0;
 	unlock_forks(fork1, fork2, id, progdata);
 	return (1);
@@ -264,7 +265,7 @@ void	*life_cycle(void *progdata)
 		|| is_dead(progdata, &last_meal, id) || is_full(progdata, id))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
-		pl_usleep(pdata->usec_time_to_sleep);
+		pl_usleep(pdata->time_to_sleep);
 	}
 	return (NULL);
 }
