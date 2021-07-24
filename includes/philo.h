@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/24 22:50:55 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/24 23:10:25 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # define ARG_SYN_ERR 3
 # define PTHREAD_CREAT_ERR 4
 # define PTHREAD_MUTEX_INIT_ERR 5
+# define NO_PHILOS 6
 
 /*
 ** Error Functions

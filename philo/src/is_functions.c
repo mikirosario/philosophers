@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/24 22:52:19 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/24 23:36:40 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,13 +88,13 @@ char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 		(&progdata->philosopher[id])->died = 1;
 		time_of_death = last_meal + progdata->time_to_die;
 		inform(RED"died"RESET, id, progdata);
+		pthread_mutex_lock(&progdata->printlock);
 		if (first_death && pl_get_time_msec() - time_of_death > 10)
 		{
-			pthread_mutex_lock(&progdata->printlock);
 			printf(RED \
 			"Took more than 10 ms to inform of philosopher death\n"RESET);
-			pthread_mutex_unlock(&progdata->printlock);
 		}
+		pthread_mutex_unlock(&progdata->printlock);
 		first_death = 0;
 	}
 	return ((&progdata->philosopher[id])->died);

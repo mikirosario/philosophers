@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 22:43:05 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/24 23:05:37 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ t_progdata *progdata)
 	if (fork1 != fork2)
 		return (0);
 	pl_usleep(progdata->time_to_die + 1);
-	if (progdata->philosopher[id].died || progdata->philosopher[id].murdered)
-		return (0);
 	return (1);
 }
 
