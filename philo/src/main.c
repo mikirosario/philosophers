@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 05:46:42 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 22:57:12 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,8 @@ int	main(int argc, char **argv)
 	if (setup(&progdata, argc, argv))
 	{
 		i = 0;
-		while (!(&progdata.philosopher[i])->died && \
+		usleep(100);
+		while (!is_dead(&progdata, progdata.philosopher[i].last_meal, i) && \
 		hungry_philosophers(&progdata))
 			if (++i == (size_t)progdata.number_of_philosophers)
 				i = 0;

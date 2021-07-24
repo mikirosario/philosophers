@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_lib.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 05:41:10 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 22:41:06 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,11 @@ typedef struct s_philosopher
 	int						fork1;
 	int						fork2;
 	int						times_ate;
+	char					hasfork1;
+	char					hasfork2;
 	char					died;
 	char					murdered;
+	char					starved;
 	char					eating;
 	char					even;
 	char					full;

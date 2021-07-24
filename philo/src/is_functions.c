@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_functions.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/24 05:55:57 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 22:52:19 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,13 @@
 ** We return 0 to indicate a philosopher has not starved.
 */
 
-char	starved(t_progdata *progdata, long long unsigned int *last_meal, int id)
+char	starved(t_progdata *progdata, long long unsigned int last_meal, int id)
 {
 	long long unsigned int	diff;
-
-	diff = pl_get_time_msec() - *last_meal;
+(void)id;
+	diff = pl_get_time_msec() - last_meal;
 	if (diff > (long long unsigned int)progdata->time_to_die)
 		return (1);
-	if (progdata->philosopher[id].eating)
-		*last_meal += diff;
 	return (0);
 }
 
@@ -79,7 +77,7 @@ char	is_full(t_progdata *progdata, int id)
 ** applies to the starved philosopher, not the murdered ones.
 */
 
-char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
+char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 {
 	long long unsigned int	time_of_death;
 	static char				first_death = 1;
@@ -87,7 +85,8 @@ char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
 	if (starved(progdata, last_meal, id) || \
 	(&progdata->philosopher[id])->murdered)
 	{
-		time_of_death = *last_meal + progdata->time_to_die;
+		(&progdata->philosopher[id])->died = 1;
+		time_of_death = last_meal + progdata->time_to_die;
 		inform(RED"died"RESET, id, progdata);
 		if (first_death && pl_get_time_msec() - time_of_death > 10)
 		{
@@ -97,9 +96,6 @@ char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
 			pthread_mutex_unlock(&progdata->printlock);
 		}
 		first_death = 0;
-		(&progdata->philosopher[id])->died = 1;
-		unlock_forks(progdata->philosopher[id].fork1, \
-		progdata->philosopher[id].fork2, id, progdata);
 	}
 	return ((&progdata->philosopher[id])->died);
 }

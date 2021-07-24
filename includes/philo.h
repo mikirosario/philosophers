@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/11 00:38:28 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 22:50:55 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int		setup(t_progdata *progdata, int argc, char **argv);
 int		identify_self(t_progdata *progdata);
 void	identify_forks(int id, t_progdata *progdata);
 void	inform(char *msg, int id, t_progdata *progdata);
-char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, \
+char	is_dead(t_progdata *progdata, long long unsigned int last_meal, \
 		int id);
 char	is_full(t_progdata *progdata, int id);
 void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata);
