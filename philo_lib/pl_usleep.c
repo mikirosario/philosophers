@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pl_usleep.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 01:56:58 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/24 05:12:28 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/24 14:13:58 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 void	pl_usleep(int wait)
 {
-	uint64_t	time_end;
+	long long unsigned int	time_end;
 
 	time_end = pl_get_time_msec() + wait;
 	while (pl_get_time_msec() != time_end)
