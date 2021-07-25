@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 17:08:32 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 11:04:04 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 13:16:45 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,6 @@ int	iamerror(int error_code, char *error_func)
 	else if (error_code == PTHREAD_MUTEX_INIT_ERR)
 		printf(RED"Failure in pthread_mutex_init call in %s\n"RESET, error_func);
 	else if (error_code == NO_PHILOS)
-		printf(RED"If zero philosophers have lived, can they ever die? Are they not then immortal?\n"RESET);
+		printf(RED"Are zero philosophers immortal?\n"RESET);
 	return (0);
 }

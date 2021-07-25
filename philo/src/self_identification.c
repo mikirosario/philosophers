@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 01:50:57 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/25 12:19:30 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 12:53:33 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 ** neighbouring philosophers.
 **
 ** Both forks and philosophers are in arrays numbered from 0 to
-** forks/philosophers - 1.
+** total forks/philosophers - 1.
 **
 ** We define right forks as those corresponding to the ID of the philosopher in
 ** their array, and left forks as those corresponding to the ID + 1. The last

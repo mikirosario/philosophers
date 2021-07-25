@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 12:01:51 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 13:16:07 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,8 +239,7 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 void	*life_cycle(void *progdata)
 {
 	int						id;
-	t_progdata				*pdata;			
-	//long long unsigned int	last_meal;
+	t_progdata				*pdata;
 
 	pdata = ((t_progdata *)progdata);
 	id = identify_self(progdata);
@@ -250,7 +249,8 @@ void	*life_cycle(void *progdata)
 	pdata->philosopher[id].last_meal = pl_get_time_msec();
 	while (1)
 	{
-		if (!think(id, progdata) || !eat(id, &pdata->philosopher[id].last_meal, progdata) \
+		if (!think(id, progdata) || \
+		!eat(id, &pdata->philosopher[id].last_meal, progdata) \
 		|| pdata->philosopher[id].died || pdata->philosopher[id].murdered \
 		|| is_full(progdata, id))
 			break ;

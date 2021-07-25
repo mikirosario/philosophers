@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/24 23:10:25 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 13:17:29 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,6 @@ char	get_args_utest(int argc, char **argv, t_progdata *progdata);
 int		philo_init(int number_of_philosophers, t_progdata *progdata);
 int		thread_init(int number_of_philosophers, t_progdata *progdata);
 int		fork_init(int number_of_forks, t_progdata *progdata);
-//experimentos
-int		waiter_init(t_progdata *progdata);
-//experimentos
-
 int		setup(t_progdata *progdata, int argc, char **argv);
 
 /*
