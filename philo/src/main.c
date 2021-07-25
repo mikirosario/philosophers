@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 12:05:56 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 13:22:24 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ char	hungry_philosophers(t_progdata *progdata)
 
 	i = 0;
 	while (i < (size_t)progdata->number_of_philosophers)
-		//if (!is_full(progdata, i++))
 		if (!progdata->philosopher[i++].full)
 			return (1);
 	return (0);
