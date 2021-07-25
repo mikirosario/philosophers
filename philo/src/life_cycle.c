@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 23:05:37 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 11:43:52 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,16 @@
 ** termination.
 **
 ** If there is more than one philosopher we immediately return 0. Otherwise, we
-** wait time_to_die milliseconds, we run is_dead, which will confirm and
-** register the philosopher's death, informing the main function of it so it can
-** kill the other philosophers. Then we return 1.
+** wait time_to_die milliseconds so the thread doesn't get stuck waiting for the
+** the double mutex lock on the same fork, since it will inevitably die as it
+** lacks two forks.
 */
 
-char	one_philosopher(int id, long long unsigned int *last_meal, \
-t_progdata *progdata)
+char	one_philosopher(int id, t_progdata *progdata)
 {
-	int	fork1;
-	int	fork2;
-(void)last_meal;
-	fork1 = (progdata->philosopher[id]).fork1;
-	fork2 = (progdata->philosopher[id]).fork2;
-	if (fork1 != fork2)
+	if (progdata->philosopher[id].fork1 != progdata->philosopher[id].fork2)
 		return (0);
-	pl_usleep(progdata->time_to_die + 1);
+	pl_usleep(progdata->time_to_die);
 	return (1);
 }
 
@@ -119,7 +113,7 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 ** If the philosopher successfully thinks, we return 1.
 */
 
-char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
+char	think(int id, t_progdata *progdata)
 {
 	int	fork1;
 	int	fork2;
@@ -129,7 +123,7 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	if (progdata->philosopher[id].died || progdata->philosopher[id].murdered)
 		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
-	if (one_philosopher(id, last_meal, progdata))
+	if (one_philosopher(id, progdata))
 		return (0);
 	pthread_mutex_lock(&progdata->forks[fork1]);
 	progdata->philosopher[id].hasfork1 = 1;
@@ -258,7 +252,7 @@ void	*life_cycle(void *progdata)
 	pdata->philosopher[id].last_meal = pl_get_time_msec();
 	while (1)
 	{
-		if (!think(id, &pdata->philosopher[id].last_meal, progdata) || !eat(id, &pdata->philosopher[id].last_meal, progdata) \
+		if (!think(id, progdata) || !eat(id, &pdata->philosopher[id].last_meal, progdata) \
 		|| pdata->philosopher[id].died || pdata->philosopher[id].murdered || is_full(progdata, id))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);

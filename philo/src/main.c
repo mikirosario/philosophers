@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 22:57:12 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 11:22:07 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,20 @@ void	tjoin(t_progdata *progdata)
 ** now we can use pthread_join to reclaim the resources.
 **
 ** Then we do freeme to free dynamically allocated memory.
+**
+** The is_dead function is now exclusively called from main in a continual loop.
+** All philosophers are monitored continually by comparing the last time they
+** ate with that time plus their time to die, and they are declared dead if the
+** result is higher. To prevent philosophers from overwriting their last_meal
+** while a check is in progress, we pass it by value, not by reference.
+** Nevertheless, while this achieves the goal of continuous life-status checking
+** without communication between philosophers, in slow CPUs or with many
+** philosophers you get to a point where checking the status of every philosopher
+** takes longer than 10ms. There is also the problem that the checks can start
+** before all the philosophers have a chance to initialize their last_meal
+** variable, hence the milisecond sleep before the check routine begins.
+**
+** Maybe I could get better performance with a grim reaper thread.
 */
 
 int	main(int argc, char **argv)
@@ -123,7 +137,7 @@ int	main(int argc, char **argv)
 	if (setup(&progdata, argc, argv))
 	{
 		i = 0;
-		usleep(100);
+		usleep(1000);
 		while (!is_dead(&progdata, progdata.philosopher[i].last_meal, i) && \
 		hungry_philosophers(&progdata))
 			if (++i == (size_t)progdata.number_of_philosophers)
