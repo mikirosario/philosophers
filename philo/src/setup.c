@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 19:01:24 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 23:12:36 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 12:21:18 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ void	get_args(int argc, char **argv, t_progdata *progdata)
 ** returned. The iamerror function always returns 0. The init functions return
 ** 1 if successful and otherwise 0, so we AND them all together. If any of them
 ** return 0, we return 0. If they all return 1, we return 1.
-**
-** REMOVE UNIT_TEST FROM FINAL VERSION.
 */
 
 int	setup(t_progdata *progdata, int argc, char **argv)

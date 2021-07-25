@@ -3,27 +3,51 @@
 /*                                                        :::      ::::::::   */
 /*   self_identification.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 01:50:57 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/24 03:43:20 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/25 12:19:30 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_lib.h"
 
+/*
+** This function identifies which forks will be picked up first and second by
+** each philosopher. Even philosophers will pick up their right fork first, then
+** their left, while odd philosophers will pick up their left fork first, then
+** their right. This prevents deadlock and ensures alternation between
+** neighbouring philosophers.
+**
+** Both forks and philosophers are in arrays numbered from 0 to
+** forks/philosophers - 1.
+**
+** We define right forks as those corresponding to the ID of the philosopher in
+** their array, and left forks as those corresponding to the ID + 1. The last
+** philosopher's left fork is the first philosopher's right fork (fork 0), as
+** they are seated in a circle.
+**
+** Since we want IDMAX + 1 to equal 0 (circular arithmetic), when we add 1 to a
+** fork number we take the modulo of the fork number by the number of forks.
+** This way, for example, in a circle with 4 forks numbered 0 - 3:
+**
+** 3 + 1 = 4 and 4 % 4 = 0, so 3 + 1 = 0.
+** 3 + 2 = 5 and 5 % 4 = 1, so 3 + 2 = 1.
+**
+** This is like adding times on a clock, basically. :) So now our position
+** arithmetic treats the forks as if in a circle.
+*/
+
 void	identify_forks(int id, t_progdata *progdata)
 {
-	//id par
 	if (progdata->philosopher[id].even)
 	{
 		progdata->philosopher[id].fork1 = id;
-		progdata->philosopher[id].fork2 = (id + 1) % progdata->number_of_philosophers;
+		progdata->philosopher[id].fork2 = (id + 1) % progdata->number_of_forks;
 	}
-	//id impar
 	else
 	{
-		progdata->philosopher[id].fork1 = (id + 1) % progdata->number_of_philosophers;
+		progdata->philosopher[id].fork1 = (id + 1) % progdata->number_of_forks;
 		progdata->philosopher[id].fork2 = id;
 	}
 }

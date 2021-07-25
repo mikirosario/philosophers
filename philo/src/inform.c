@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   inform.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:43:36 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/24 05:52:58 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/25 12:45:36 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@
 ** printing their status until they are killed by main after one thread dies.
 ** It does NOT change the underlying functioning OR make the simulation stop
 ** any sooner than it otherwise would OR prevent other threads from continuing
-** with their life cycles until they hit the next is_dead check. All it does is
-** mute all the threads.
+** with their life cycles until they are reaped by the next is_dead check. All
+** it does is mute all the threads.
 **
 ** But certain 42 students apparently have a very emotional attachment to having
 ** "died" be the last message they see and apparently will FAIL projects that do
-** not satisfy this criterion. So... here it is. :P
+** not satisfy this criterion. So... here you go. :P
 */
 
 void	inform(char *msg, int id, t_progdata *progdata)

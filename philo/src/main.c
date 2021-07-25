@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 11:22:07 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 12:05:56 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,11 +121,16 @@ void	tjoin(t_progdata *progdata)
 ** Nevertheless, while this achieves the goal of continuous life-status checking
 ** without communication between philosophers, in slow CPUs or with many
 ** philosophers you get to a point where checking the status of every philosopher
-** takes longer than 10ms. There is also the problem that the checks can start
-** before all the philosophers have a chance to initialize their last_meal
-** variable, hence the milisecond sleep before the check routine begins.
+** takes longer than 10ms. The school Macs seem able to handle it, though. :)
 **
-** Maybe I could get better performance with a grim reaper thread.
+** There is also the problem that the checks can start before all the
+** philosophers have a chance to initialize their last_meal variable, hence the
+** milisecond sleep before the check routine begins to give the philosopher
+** threads some extra time to do that.
+**
+** Maybe I could get better performance with a dedicated grim reaper thread, so
+** the dead and hungry checks are performed concurrently instead of
+** sequentially.
 */
 
 int	main(int argc, char **argv)

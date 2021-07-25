@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 11:43:52 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 12:01:51 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,6 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 
 	msg1 = "Failed pthread_mutex_unlock(fork[";
 	msg2 = "]) in unlock_forks\n";
-	// pthread_mutex_unlock(&progdata->forks[fork2]);
-	// pthread_mutex_unlock(&progdata->forks[fork1]);
 	if (progdata->philosopher[id].hasfork1)
 	{
 		if (pthread_mutex_unlock(&progdata->forks[fork1]))
@@ -253,7 +251,8 @@ void	*life_cycle(void *progdata)
 	while (1)
 	{
 		if (!think(id, progdata) || !eat(id, &pdata->philosopher[id].last_meal, progdata) \
-		|| pdata->philosopher[id].died || pdata->philosopher[id].murdered || is_full(progdata, id))
+		|| pdata->philosopher[id].died || pdata->philosopher[id].murdered \
+		|| is_full(progdata, id))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->time_to_sleep);
