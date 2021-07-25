@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 22:41:06 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 13:20:46 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,6 @@ typedef struct s_progdata
 	int						error;
 	int						bonus_uid;
 	int						dinner_bell;
-	long long int			usec_time_to_eat; //obsoleto
-	long long int			usec_time_to_sleep; //obsoleto
-	long long int			usec_time_to_die; //obsoleto
 	long long unsigned int	time_start;
 	int						*deadchildren;
 	pid_t					*children;
