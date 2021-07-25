@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/25 13:17:29 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 17:19:34 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,7 @@
 # define PHILO_H
 
 # include "philo_lib.h"
-# include <stdlib.h>
-# include <string.h>
 # include <stdio.h>
-# include <unistd.h>
-# include <sys/time.h>
 # define MALLOC_ERR 1
 # define ARG_NUM_ERR 2
 # define ARG_SYN_ERR 3
@@ -31,12 +27,6 @@
 */
 
 int		iamerror(int error_code, char *error_func);
-
-/*
-** Unit Tests
-*/
-
-char	get_args_utest(int argc, char **argv, t_progdata *progdata);
 
 /*
 ** Initialization

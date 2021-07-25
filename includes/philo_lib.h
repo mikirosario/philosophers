@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 13:20:46 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 17:29:31 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ typedef struct s_philosopher
 	char					hasfork2;
 	char					died;
 	char					murdered;
-	char					starved;
 	char					eating;
 	char					even;
 	char					full;
@@ -44,9 +43,7 @@ typedef struct s_progdata
 	int						number_of_times_each_philosopher_must_eat;
 	int						number_of_forks;
 	int						argc;
-	int						error;
 	int						bonus_uid;
-	int						dinner_bell;
 	long long unsigned int	time_start;
 	int						*deadchildren;
 	pid_t					*children;

@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 13:16:07 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 21:03:22 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,9 @@ char	think(int id, t_progdata *progdata)
 ** is greater than the time_to_die. If the philosopher is not dead, and it is
 ** eating, the time_to_die is also reset here.
 **
-** If a philosopher is full or is dead, its forks are unlocked and we return 0.
+** If a philosopheris dead, its forks are unlocked and we return 0.
+**
+** If a philosopher is made full by this meal, we flip its full flag.
 **
 ** Otherwise, we inform that it is eating. If a sixth argument was provided, we
 ** increment the times_ate variable for the philosopher.
@@ -161,7 +163,9 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	fork1 = (progdata->philosopher[id]).fork1;
 	fork2 = (progdata->philosopher[id]).fork2;
 	progdata->philosopher[id].eating = 1;
-	if (progdata->philosopher[id].died || progdata->philosopher[id].murdered)
+//	if (is_full(progdata, id))
+//		progdata->philosopher[id].full = 1;
+	if (progdata->philosopher[id].died || progdata->philosopher[id].murdered || is_full(progdata, id))
 		return (0);
 	inform(GRN"is eating"RESET, id, progdata);
 	*last_meal += pl_get_time_msec() - *last_meal;
@@ -169,6 +173,8 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 		progdata->philosopher[id].times_ate++;
 	pl_usleep(progdata->time_to_eat);
 	progdata->philosopher[id].eating = 0;
+	if (is_full(progdata, id))
+		return (0);
 	unlock_forks(fork1, fork2, id, progdata);
 	return (1);
 }
@@ -249,10 +255,8 @@ void	*life_cycle(void *progdata)
 	pdata->philosopher[id].last_meal = pl_get_time_msec();
 	while (1)
 	{
-		if (!think(id, progdata) || \
-		!eat(id, &pdata->philosopher[id].last_meal, progdata) \
-		|| pdata->philosopher[id].died || pdata->philosopher[id].murdered \
-		|| is_full(progdata, id))
+		if (!think(id, progdata) || !eat(id, &pdata->philosopher[id].last_meal, progdata) \
+		|| pdata->philosopher[id].died || pdata->philosopher[id].murdered)
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->time_to_sleep);

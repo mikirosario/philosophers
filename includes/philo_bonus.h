@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/10 22:11:50 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/25 17:43:52 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,14 @@
 # define PHILO_BONUS_H
 
 # include "philo_lib.h"
-# include <stdlib.h>
-# include <string.h>
+//# include <stdlib.h>
+// # include <string.h>
 # include <stdio.h>
-# include <unistd.h>
-# include <sys/time.h>
+# include <semaphore.h>
+# include <sys/wait.h>
+# include <fcntl.h>
+// # include <unistd.h>
+//# include <sys/time.h>
 # define MALLOC_ERR 1
 # define ARG_NUM_ERR 2
 # define ARG_SYN_ERR 3
@@ -66,7 +69,7 @@ int		setup(t_progdata *progdata, int argc, char **argv);
 int		identify_self(t_progdata *progdata);
 void	identify_forks(int id, t_progdata *progdata);
 void	inform(char *msg, int id, t_progdata *progdata);
-char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, \
+char	is_dead(t_progdata *progdata, long long unsigned int last_meal, \
 		int id);
 char	is_full(t_progdata *progdata, int id);
 void	life_cycle(void *progdata);

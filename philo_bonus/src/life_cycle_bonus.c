@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   life_cycle_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 22:21:19 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/25 18:06:16 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_progdata *progdata)
 {
 	if (progdata->number_of_philosophers == 1)
 	{
-		pl_usleep(progdata->usec_time_to_die + 1000);
+		pl_usleep(progdata->time_to_die + 1);
 		is_dead(progdata, last_meal, id);
 		return (1);
 	}
@@ -153,10 +153,11 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 		unlock_forks(progdata);
 		return (0);
 	}
-	inform(GRN"is eating"RESET, id, progdata);
+	inform(GRN"is eating"RESET, id, progdata);	
+	*last_meal += pl_get_time_msec() - *last_meal;
 	if (progdata->argc == 6)
 		progdata->philosopher[id].times_ate++;
-	pl_usleep(progdata->usec_time_to_eat);
+	pl_usleep(progdata->time_to_eat);
 	progdata->philosopher[id].eating = 0;
 	unlock_forks(progdata);
 	return (1);
@@ -244,7 +245,7 @@ void	life_cycle(void *progdata)
 		|| is_dead(progdata, &last_meal, id) || is_full(progdata, id))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
-		pl_usleep(pdata->usec_time_to_sleep);
+		pl_usleep(pdata->time_to_sleep);
 	}
 	if (pdata->philosopher[id].died)
 		exit_status(progdata, STARVED);

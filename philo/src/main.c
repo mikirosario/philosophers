@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 13:22:24 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 21:09:43 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,6 @@ void	freeme(t_progdata *progdata)
 **
 ** If ALL philosophers are full, we return 0 to indicate there are no hungry
 ** philosophers left.
-**
-** The is_full function always returns false (aka. hungry) if no argument was
-** passed for number_of_times_a_philosopher_must_eat. Thus, this function will
-** also always return 0 in that case.
 */
 
 char	hungry_philosophers(t_progdata *progdata)
@@ -63,6 +59,7 @@ char	hungry_philosophers(t_progdata *progdata)
 	while (i < (size_t)progdata->number_of_philosophers)
 		if (!progdata->philosopher[i++].full)
 			return (1);
+	//progdata->stop = 1;
 	return (0);
 }
 
@@ -122,6 +119,13 @@ void	tjoin(t_progdata *progdata)
 ** philosophers you get to a point where checking the status of every philosopher
 ** takes longer than 10ms. The school Macs seem able to handle it, though. :)
 **
+** Philosophers are monitored even after they finish all tasks in their thread.
+** I don't use detatch_thread, so the thread data persists even when the
+** philosophers finish all their tasks. However, in the is_dead check we specify
+** that a full philosopher can never starve. This prevents is_dead from
+** mistakenly reporting the death of philosophers that have stopped eating
+** because they are full.
+**
 ** There is also the problem that the checks can start before all the
 ** philosophers have a chance to initialize their last_meal variable, hence the
 ** milisecond sleep before the check routine begins to give the philosopher
@@ -146,7 +150,7 @@ int	main(int argc, char **argv)
 		hungry_philosophers(&progdata))
 			if (++i == (size_t)progdata.number_of_philosophers)
 				i = 0;
-		if ((&progdata.philosopher[i])->died)
+		if (progdata.philosopher[i].died)
 			hemlock(&progdata);
 		tjoin(&progdata);
 	}

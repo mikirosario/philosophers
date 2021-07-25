@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_init_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 22:33:32 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/25 17:34:45 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,8 +154,5 @@ int	philo_init(int number_of_philosophers, t_progdata *progdata)
 		return (iamerror(SEM_OPEN_FAIL, "philo_init"));
 	else
 		progdata->gotprintsem = 1;
-	progdata->usec_time_to_eat = progdata->time_to_eat * 1000;
-	progdata->usec_time_to_sleep = progdata->time_to_sleep * 1000;
-	progdata->usec_time_to_die = progdata->time_to_die * 1000;
 	return (1);
 }

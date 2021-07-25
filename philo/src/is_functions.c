@@ -6,14 +6,15 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/25 12:43:19 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/25 21:07:02 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*
-** This function will check whether a philosopher has starved.
+** This function will check whether a philosopher has starved. Full philosophers
+** cannot starve.
 **
 ** First we get the difference between the current timestamp and the last meal.
 **
@@ -23,34 +24,34 @@
 ** We return 0 to indicate a philosopher has not starved.
 */
 
-char	starved(t_progdata *progdata, long long unsigned int last_meal)
+char	starved(t_progdata *progdata, int id, long long unsigned int last_meal)
 {
 	long long unsigned int	diff;
 
-	diff = pl_get_time_msec() - last_meal;
-	if (diff > (long long unsigned int)progdata->time_to_die)
-		return (1);
+	if (!progdata->philosopher[id].full)
+	{
+		diff = pl_get_time_msec() - last_meal;
+		if (diff > (long long unsigned int)progdata->time_to_die)
+			return (1);
+	}
 	return (0);
 }
 
 /*
 ** This function will check whether a philosopher has eaten
 ** number_of_times_a_philosopher_must_eat times if that variable has been passed
-** as an argument. If it has and the philosopher has eaten that many times, 1 is
-** returned. If no such variable was passed, or the philosopher hasn't eaten
-** that many times, 0 is returned.
+** as an argument. If it has and the philosopher has eaten exactly that many
+** times, 1 is returned. If no such variable was passed, or the philosopher has
+** eaten more or less than that many times, 0 is returned. If the fullness monitor
+** in main detects all philosophers are full, the simulation is stopped.
 */
 
 char	is_full(t_progdata *progdata, int id)
 {
-	if (progdata->argc == 6 && (&progdata->philosopher[id])->times_ate == \
+	if (progdata->argc == 6 && progdata->philosopher[id].times_ate == \
 	progdata->number_of_times_each_philosopher_must_eat)
 	{
-		if (progdata->philosopher[id].eating)
-			pl_usleep(progdata->time_to_eat);
 		progdata->philosopher[id].full = 1;
-		unlock_forks(progdata->philosopher[id].fork1, \
-		progdata->philosopher[id].fork2, id, progdata);
 		return (1);
 	}
 	return (0);
@@ -100,7 +101,7 @@ char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 	long long unsigned int	time_of_death;
 	static char				first_death = 1;
 
-	if (starved(progdata, last_meal) || \
+	if (starved(progdata, id, last_meal) || \
 	(&progdata->philosopher[id])->murdered)
 	{
 		(&progdata->philosopher[id])->died = 1;
