@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 22:08:56 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/26 22:21:17 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/26 22:40:27 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,8 @@ void	kill_philosophers(t_progdata *progdata)
 	i = 0;
 	while (i < (size_t)progdata->number_of_philosophers)
 	{
-		//if (!pidcmp(progdata->children[i], progdata->deadchildren, 
-		//	progdata->number_of_philosophers))
+		if (!pidcmp(progdata->children[i], progdata->deadchildren, 
+			progdata->number_of_philosophers))
 				kill(progdata->children[i], SIGTERM);
 		i++;
 	}

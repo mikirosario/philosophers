@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/26 18:19:27 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/26 23:08:32 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,9 @@ int	main(int argc, char **argv)
 	sem_unlink("/forksem");
 	sem_unlink("/printsem");
 	sem_unlink("/waitersem");
+	freeme(&progdata);
 	if (!res)
-		exit_status(&progdata, EXIT_FAILURE);
-	exit_status(&progdata, EXIT_SUCCESS);
+		exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 	return (0);
 }
