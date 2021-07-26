@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/26 18:30:11 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/26 18:40:50 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,6 +272,7 @@ void	life_cycle(void *progdata)
 	pdata->philosopher[id].last_meal = pl_get_time_msec();
 	if (pthread_create(&pdata->philosopher[id].grim_reaper, NULL, grim_reaper, progdata))
 		exit_status(progdata, PTHREAD_CREAT_ERR);
+	pthread_detach(pdata->philosopher[id].grim_reaper);
 	while (1)
 	{
 		if (!think(id, progdata) || !eat(id, &pdata->philosopher[id].last_meal, progdata))
