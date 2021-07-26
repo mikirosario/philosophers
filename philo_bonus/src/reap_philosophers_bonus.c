@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   reap_philosophers_bonus.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 22:08:56 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/10 22:18:01 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/26 18:15:40 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ int	wait_for_full_philosophers(t_progdata *progdata)
 		if (WIFEXITED(stat_loc))
 			stat_loc = WEXITSTATUS(stat_loc);
 	}
+	if (stat_loc == PTHREAD_CREAT_ERR)
+		iamerror(PTHREAD_CREAT_ERR, "wait_for_full_philosophers");
 	return (i);
 }
 
@@ -90,8 +92,8 @@ void	kill_philosophers(t_progdata *progdata)
 	while (i < (size_t)progdata->number_of_philosophers)
 	{
 		if (!pidcmp(progdata->children[i], progdata->deadchildren, \
-		progdata->number_of_philosophers))
-			kill(progdata->children[i], SIGTERM);
+			progdata->number_of_philosophers))
+				kill(progdata->children[i], SIGTERM);
 		i++;
 	}
 }

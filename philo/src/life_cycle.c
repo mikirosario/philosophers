@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 21:03:22 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/26 09:30:48 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,9 +173,9 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 		progdata->philosopher[id].times_ate++;
 	pl_usleep(progdata->time_to_eat);
 	progdata->philosopher[id].eating = 0;
+	unlock_forks(fork1, fork2, id, progdata);
 	if (is_full(progdata, id))
 		return (0);
-	unlock_forks(fork1, fork2, id, progdata);
 	return (1);
 }
 

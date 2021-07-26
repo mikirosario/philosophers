@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 17:29:31 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/26 17:39:37 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct s_philosopher
 	char					eating;
 	char					even;
 	char					full;
+	pthread_t				grim_reaper;
 }				t_philosopher;
 
 typedef struct s_progdata

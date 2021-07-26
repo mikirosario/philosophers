@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/25 17:51:04 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/26 10:13:02 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,12 @@ char	starved(t_progdata *progdata, long long unsigned int last_meal, int id)
 {
 	long long unsigned int	diff;
 
-	diff = pl_get_time_msec() - last_meal;
-	if (diff > (long long unsigned int)progdata->time_to_die)
-		return (1);
+	if (!progdata->philosopher[id].full)
+	{
+		diff = pl_get_time_msec() - last_meal;
+		if (diff > (long long unsigned int)progdata->time_to_die)
+			return (1);
+	}
 	return (0);
 }
 
@@ -47,9 +50,12 @@ char	starved(t_progdata *progdata, long long unsigned int last_meal, int id)
 
 char	is_full(t_progdata *progdata, int id)
 {
-	if (progdata->argc == 6 && (&progdata->philosopher[id])->times_ate == \
+	if (progdata->argc == 6 && progdata->philosopher[id].times_ate == \
 	progdata->number_of_times_each_philosopher_must_eat)
+	{
+		progdata->philosopher[id].full = 1;
 		return (1);
+	}
 	return (0);
 }
 
@@ -64,7 +70,7 @@ char	is_full(t_progdata *progdata, int id)
 ** In any case, we return the value of the philosopher's died variable.
 */
 
-char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
+char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 {
 	long long unsigned int	time_of_death;
 
@@ -73,13 +79,13 @@ char	is_dead(t_progdata *progdata, long long unsigned int *last_meal, int id)
 		progdata->philosopher[id].died = 1;
 		time_of_death = last_meal + progdata->time_to_die;
 		inform(RED"died"RESET, id, progdata);
-		sem_wait(progdata->printsem);
+		//sem_wait(progdata->printsem);
 		if (pl_get_time_msec() - time_of_death > 10)
 		{
 			printf(RED \
 			"Took more than 10 ms to inform of philosopher death\n"RESET);
 		}
-		sem_post(progdata->printsem);
+		//sem_post(progdata->printsem);
 	}
 	return ((&progdata->philosopher[id])->died);
 }

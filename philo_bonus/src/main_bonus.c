@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 17:50:22 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/26 18:19:27 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ int	main(int argc, char **argv)
 {
 	t_progdata	progdata;
 	size_t		number_of_dead_children;
-	size_t		i;
 	int			res;
 
 	pl_bzero(&progdata, sizeof(t_progdata));
@@ -109,11 +108,7 @@ int	main(int argc, char **argv)
 	res = setup(&progdata, argc, argv);
 	if (res)
 	{
-		while (!is_dead(&progdata, progdata.philosopher[i].last_meal, i) && \
-		hungry_philosophers(&progdata))
-			if (++i == (size_t)progdata.number_of_philosophers)
-				i = 0;
-		//number_of_dead_children = wait_for_full_philosophers(&progdata);
+		number_of_dead_children = wait_for_full_philosophers(&progdata);
 		if (number_of_dead_children < (size_t)progdata.number_of_philosophers)
 			kill_philosophers(&progdata);
 	}

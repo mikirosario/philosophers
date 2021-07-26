@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iamerror_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 17:08:32 by miki              #+#    #+#             */
-/*   Updated: 2021/07/10 22:22:22 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/26 17:44:06 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ int	iamerror(int error_code, char *error_func)
 		printf(RED"Wrong number of arguments in %s\n"RESET, error_func);
 	else if (error_code == ARG_SYN_ERR)
 		printf(RED"Argument is not a valid integer in %s\n"RESET, error_func);
+	else if (error_code == PTHREAD_CREAT_ERR)
+		printf(RED"Failure in pthread_create call in %s\n"RESET, error_func);
 	else if (error_code == FORK_FAILURE)
 		printf(RED"Failure in fork call in %s\n"RESET, error_func);
 	else if (error_code == SEM_OPEN_FAIL)

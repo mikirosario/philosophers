@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 18:06:16 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/26 18:30:11 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,49 @@
 ** If there is more than one philosopher this function does nothing.
 */
 
-char	one_philosopher(int id, long long unsigned int *last_meal, \
-t_progdata *progdata)
+char	one_philosopher(t_progdata *progdata)
 {
 	if (progdata->number_of_philosophers == 1)
 	{
-		pl_usleep(progdata->time_to_die + 1);
-		is_dead(progdata, last_meal, id);
+		pl_usleep(progdata->time_to_die);
 		return (1);
 	}
 	return (0);
+}
+
+/*
+** This thread is spawned by each process and acts as a liveness monitor. If the
+** process meets the conditions for starvation at any point, is_dead will return
+** true. The is_dead function calls inform to notify of the first death, and
+** inform will NOT return the printsem binary semaphore after a death
+** notification, so the death notification will be the last thing printed.
+**
+** We check liveness every 5 milliseconds, so we will report a philosopher's
+** death from 0 - ~5 milliseconds after it happens. In practice, on my laptop,
+** if a philosopher dies at 310 we are informed from 311 to 316 at latest. The
+** school Macs might be better at this.
+**
+** If the philosopher is dead, we exit with the STARVED status. If there is only
+** one philosopher, of course, it must starve. Exiting destroys the process
+** along with the thread, so nothing more to do here. The main function will
+** proceed to kill and reap the rest of the children as soon as it receives
+** confirmation that a process has exited with the STARVED status. :)
+**
+** Semaphore possession doesn't matter as all remaining processes will now be
+** terminated.
+*/
+
+void	*grim_reaper(void *progdata)
+{
+	t_progdata	*pdata;
+
+	pdata = (t_progdata *)progdata;
+	one_philosopher(pdata);
+	while (!is_dead(pdata, pdata->philosopher[pdata->bonus_uid].last_meal, \
+	pdata->bonus_uid))
+		pl_usleep(5);
+	exit_status(progdata, STARVED);
+	return (NULL);
 }
 
 /*
@@ -109,13 +142,9 @@ void	unlock_forks(t_progdata *progdata)
 ** If the philosopher successfully thinks, we return 1.
 */
 
-char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
+char	think(int id, t_progdata *progdata)
 {
-	if (is_dead(progdata, last_meal, id))
-		return (0);
 	inform(CYN"is thinking"RESET, id, progdata);
-	if (one_philosopher(id, last_meal, progdata))
-		return (0);
 	sem_wait(progdata->waitersem);
 	sem_wait(progdata->forksem);
 	inform(YEL"has taken a fork"RESET, id, progdata);
@@ -148,7 +177,7 @@ char	think(int id, long long unsigned int *last_meal, t_progdata *progdata)
 char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 {
 	progdata->philosopher[id].eating = 1;
-	if (is_dead(progdata, last_meal, id) || is_full(progdata, id))
+	if (is_full(progdata, id))
 	{
 		unlock_forks(progdata);
 		return (0);
@@ -160,10 +189,12 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	pl_usleep(progdata->time_to_eat);
 	progdata->philosopher[id].eating = 0;
 	unlock_forks(progdata);
+	if (is_full(progdata, id))
+		return(0);
 	return (1);
 }
 
-/*
+/*eat
 ** The basic life cycle of a philosopher. First we want to initialize the
 ** philosopher. Since we pass our struct pointer as void, to avoid having to
 ** cast it to its type every time we use it, we copy its address to a pointer
@@ -231,23 +262,28 @@ void	life_cycle(void *progdata)
 {
 	int						id;
 	t_progdata				*pdata;			
-	long long unsigned int	last_meal;
+	//long long unsigned int	last_meal;
 
 	pdata = ((t_progdata *)progdata);
 	pdata->forksem = sem_open("/forksem", 0);
 	pdata->printsem = sem_open("/printsem", 0);
 	pdata->waitersem = sem_open("/waitersem", 0);
-	last_meal = pl_get_time_msec();
 	id = pdata->bonus_uid;
+	pdata->philosopher[id].last_meal = pl_get_time_msec();
+	if (pthread_create(&pdata->philosopher[id].grim_reaper, NULL, grim_reaper, progdata))
+		exit_status(progdata, PTHREAD_CREAT_ERR);
 	while (1)
 	{
-		if (!think(id, &last_meal, progdata) || !eat(id, &last_meal, progdata) \
-		|| is_dead(progdata, &last_meal, id) || is_full(progdata, id))
+		if (!think(id, progdata) || !eat(id, &pdata->philosopher[id].last_meal, progdata))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->time_to_sleep);
 	}
-	if (pdata->philosopher[id].died)
-		exit_status(progdata, STARVED);
+	// while (1)
+	// {
+	// 	pl_usleep(100000);
+	// }
+	// if (pdata->philosopher[id].died)
+	// 	exit_status(progdata, STARVED);
 	exit_status(progdata, FULL);
 }
