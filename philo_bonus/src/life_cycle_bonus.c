@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/27 15:47:10 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 16:13:59 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,11 @@ void	*grim_reaper(void *progdata)
 
 	pdata = (t_progdata *)progdata;
 	//one_philosopher(pdata);
-	usleep(100);
+	pl_usleep(pdata->time_to_die + 1);
 	while (!is_dead(pdata, pdata->philosopher[pdata->bonus_uid].last_meal, \
 	pdata->bonus_uid))
-		pl_usleep(5);
+	pl_usleep(pdata->time_to_die + 1);
+		//pl_usleep(1);
 	exit_status(progdata, STARVED);
 	return (NULL);
 }
@@ -141,24 +142,11 @@ void	unlock_forks(t_progdata *progdata)
 **									2
 **
 ** If the philosopher successfully thinks, we return 1.
-**
-** On MacOS something bizarre is happening with the waitersem when the waitersem
-** initializes to 0 (there is one philosopher), the child process waits for it,
-** and then we try to close the waitersem. It HANGS on the close_sem function!
-** O_O This ONLY happens on the Mac. Linux does not have this behaviour. I don't
-** understand it and it took me awhile to isolate.
-**
-** The quick fix is when there is only 1 philosopher, we divert the process into
-** an infinite loop to wait to be terminated by the grim reaper. This fixes it.
-** I still don't know why it is happening though.
 */
 
 char	think(int id, t_progdata *progdata)
 {
 	inform(CYN"is thinking"RESET, id, progdata);
-	if (progdata->number_of_philosophers == 1)
-		while (1)
-			usleep(1000000);
 	sem_wait(progdata->waitersem);
 	sem_wait(progdata->forksem);
 	inform(YEL"has taken a fork"RESET, id, progdata);
@@ -279,9 +267,9 @@ void	life_cycle(void *progdata)
 	//long long unsigned int	last_meal;
 
 	pdata = ((t_progdata *)progdata);
-	pdata->forksem = sem_open("/forksem", 0);
-	pdata->printsem = sem_open("/printsem", 0);
-	pdata->waitersem = sem_open("/waitersem", 0);
+	//pdata->forksem = sem_open("/forksem", 0);
+	//pdata->printsem = sem_open("/printsem", 0);
+	//pdata->waitersem = sem_open("/waitersem", 0);
 	id = pdata->bonus_uid;
 	if (pthread_create(&pdata->philosopher[id].grim_reaper, NULL, grim_reaper, progdata))
 		exit_status(progdata, PTHREAD_CREAT_ERR);
