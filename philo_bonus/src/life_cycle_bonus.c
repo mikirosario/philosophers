@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/27 15:06:04 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 15:47:10 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,11 +141,24 @@ void	unlock_forks(t_progdata *progdata)
 **									2
 **
 ** If the philosopher successfully thinks, we return 1.
+**
+** On MacOS something bizarre is happening with the waitersem when the waitersem
+** initializes to 0 (there is one philosopher), the child process waits for it,
+** and then we try to close the waitersem. It HANGS on the close_sem function!
+** O_O This ONLY happens on the Mac. Linux does not have this behaviour. I don't
+** understand it and it took me awhile to isolate.
+**
+** The quick fix is when there is only 1 philosopher, we divert the process into
+** an infinite loop to wait to be terminated by the grim reaper. This fixes it.
+** I still don't know why it is happening though.
 */
 
 char	think(int id, t_progdata *progdata)
 {
 	inform(CYN"is thinking"RESET, id, progdata);
+	if (progdata->number_of_philosophers == 1)
+		while (1)
+			usleep(1000000);
 	sem_wait(progdata->waitersem);
 	sem_wait(progdata->forksem);
 	inform(YEL"has taken a fork"RESET, id, progdata);
