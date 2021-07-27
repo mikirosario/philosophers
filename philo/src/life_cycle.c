@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/26 09:30:48 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 19:19:50 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,9 +163,8 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	fork1 = (progdata->philosopher[id]).fork1;
 	fork2 = (progdata->philosopher[id]).fork2;
 	progdata->philosopher[id].eating = 1;
-//	if (is_full(progdata, id))
-//		progdata->philosopher[id].full = 1;
-	if (progdata->philosopher[id].died || progdata->philosopher[id].murdered || is_full(progdata, id))
+	if (progdata->philosopher[id].died || progdata->philosopher[id].murdered \
+	|| is_full(progdata, id))
 		return (0);
 	inform(GRN"is eating"RESET, id, progdata);
 	*last_meal += pl_get_time_msec() - *last_meal;
@@ -255,8 +254,9 @@ void	*life_cycle(void *progdata)
 	pdata->philosopher[id].last_meal = pl_get_time_msec();
 	while (1)
 	{
-		if (!think(id, progdata) || !eat(id, &pdata->philosopher[id].last_meal, progdata) \
-		|| pdata->philosopher[id].died || pdata->philosopher[id].murdered)
+		if (!think(id, progdata) || \
+		!eat(id, &pdata->philosopher[id].last_meal, progdata) || \
+		pdata->philosopher[id].died || pdata->philosopher[id].murdered)
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->time_to_sleep);

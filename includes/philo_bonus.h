@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/26 18:12:28 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 19:18:02 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int		setup(t_progdata *progdata, int argc, char **argv);
 int		identify_self(t_progdata *progdata);
 void	identify_forks(int id, t_progdata *progdata);
 void	inform(char *msg, int id, t_progdata *progdata);
+void	*grim_reaper(void *progdata);
 char	is_dead(t_progdata *progdata, long long unsigned int last_meal, \
 		int id);
 char	is_full(t_progdata *progdata, int id);

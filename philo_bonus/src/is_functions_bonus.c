@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/27 10:57:26 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 19:13:14 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,11 @@ char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 		progdata->philosopher[id].died = 1;
 		time_of_death = last_meal + progdata->time_to_die;
 		inform(RED"died"RESET, id, progdata);
-		//sem_wait(progdata->printsem);
 		if (pl_get_time_msec() - time_of_death > 10)
 		{
 			printf(RED \
 			"Took more than 10 ms to inform of philosopher death\n"RESET);
 		}
-		//sem_post(progdata->printsem);
 	}
 	return ((&progdata->philosopher[id])->died);
 }

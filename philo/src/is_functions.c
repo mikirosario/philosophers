@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/25 21:23:16 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 19:24:55 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ char	starved(t_progdata *progdata, int id, long long unsigned int last_meal)
 /*
 ** This function will check whether a philosopher has eaten
 ** number_of_times_a_philosopher_must_eat times if that variable has been passed
-** as an argument. If it has and the philosopher has eaten exactly that many
+** as an argument. If it has, and the philosopher has eaten exactly that many
 ** times, 1 is returned. If no such variable was passed, or the philosopher has
-** eaten more or less than that many times, 0 is returned. If the fullness monitor
-** in main detects all philosophers are full, the simulation is stopped.
+** eaten more or less than that many times, 0 is returned. If the fullnesss
+** monitor in main detects all philosophers are full, the simulation is stopped.
 */
 
 char	is_full(t_progdata *progdata, int id)

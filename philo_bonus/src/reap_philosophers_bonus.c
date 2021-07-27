@@ -6,12 +6,47 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 22:08:56 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/26 18:15:40 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 19:17:25 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 #include <signal.h>
+
+/*
+** This thread is spawned by each process and acts as a liveness monitor. If the
+** process meets the conditions for starvation at any point, is_dead will return
+** true. The is_dead function calls inform to notify of the first death, and
+** inform will NOT return the printsem binary semaphore after a death
+** notification, so the death notification will be the last thing printed.
+**
+** We check liveness every 5 milliseconds, so we will report a philosopher's
+** death from 0 - ~5 milliseconds after it happens. In practice, on my laptop,
+** if a philosopher dies at 310 we are informed from 311 to 316 at latest. The
+** school Macs might be better at this.
+**
+** If the philosopher is dead, we exit with the STARVED status. If there is only
+** one philosopher, of course, it must starve. Exiting destroys the process
+** along with the thread, so nothing more to do here. The main function will
+** proceed to kill and reap the rest of the children as soon as it receives
+** confirmation that a process has exited with the STARVED status. :)
+**
+** Semaphore possession doesn't matter as all remaining processes will now be
+** terminated.
+*/
+
+void	*grim_reaper(void *progdata)
+{
+	t_progdata	*pdata;
+
+	pdata = (t_progdata *)progdata;
+	pl_usleep(pdata->time_to_die + 1);
+	while (!is_dead(pdata, pdata->philosopher[pdata->bonus_uid].last_meal, \
+	pdata->bonus_uid))
+		pl_usleep(pdata->time_to_die + 1);
+	exit_status(progdata, STARVED);
+	return (NULL);
+}
 
 /*
 ** Finds matching number in array of size size. If none exists, returns 0.
@@ -92,8 +127,8 @@ void	kill_philosophers(t_progdata *progdata)
 	while (i < (size_t)progdata->number_of_philosophers)
 	{
 		if (!pidcmp(progdata->children[i], progdata->deadchildren, \
-			progdata->number_of_philosophers))
-				kill(progdata->children[i], SIGTERM);
+		progdata->number_of_philosophers))
+			kill(progdata->children[i], SIGTERM);
 		i++;
 	}
 }

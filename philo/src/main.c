@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 21:09:43 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 19:20:36 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ char	hungry_philosophers(t_progdata *progdata)
 	while (i < (size_t)progdata->number_of_philosophers)
 		if (!progdata->philosopher[i++].full)
 			return (1);
-	//progdata->stop = 1;
 	return (0);
 }
 
