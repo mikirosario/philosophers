@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/27 11:27:59 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 14:58:01 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,6 +270,13 @@ void	life_cycle(void *progdata)
 	pdata->printsem = sem_open("/printsem", 0);
 	pdata->waitersem = sem_open("/waitersem", 0);
 	id = pdata->bonus_uid;
+	if (pdata->number_of_philosophers == 1)
+	{
+		pdata->philosopher[id].last_meal = pl_get_time_msec();
+		one_philosopher(progdata);
+		is_dead(progdata, pdata->philosopher[id].last_meal, id);
+		exit_status(progdata, STARVED);
+	}
 	if (pthread_create(&pdata->philosopher[id].grim_reaper, NULL, grim_reaper, progdata))
 		exit_status(progdata, PTHREAD_CREAT_ERR);
 	pdata->philosopher[id].last_meal = pl_get_time_msec();

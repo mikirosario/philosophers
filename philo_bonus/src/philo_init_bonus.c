@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/27 14:26:13 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 14:29:23 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 	progdata->children = malloc(number_of_philosophers * sizeof(pid_t));
 	if (progdata->children == NULL)
 		return (iamerror(MALLOC_ERR, "proc_init"));
-	memset(progdata->children, 1, number_of_philosophers * sizeof(pid_t));
+	memset(progdata->children, -1, number_of_philosophers * sizeof(pid_t));
 	progdata->time_start = pl_get_time_msec();
 	while (number_of_philosophers-- > 0)
 	{
