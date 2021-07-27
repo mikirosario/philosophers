@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:43:36 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/27 17:40:48 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/27 17:42:52 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@
 
 void	inform(char *msg, int id, t_progdata *progdata)
 {
-	sem_wait(progdata->printsem) == -1)
+	if (sem_wait(progdata->printsem) == -1)
 		while (1)
 			usleep(10000);
 	printf("%llu %d"" %s\n", pl_get_time_msec() - progdata->time_start, \
