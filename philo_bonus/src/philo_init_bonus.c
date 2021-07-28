@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 11:47:29 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 16:48:17 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 ** returned. Otherwise 1 is returned.
 */
 
-int	grim_reaper_init(int number_of_philosophers, t_progdata * progdata)
+int	grim_reaper_init(int number_of_philosophers, t_progdata *progdata)
 {
 	(void)number_of_philosophers;
 	progdata->reapersem = sem_open("/reapersem", O_CREAT | O_EXCL, 0644, 6);

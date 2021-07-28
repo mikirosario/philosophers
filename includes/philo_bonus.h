@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/28 10:22:10 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 18:58:16 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int		philo_init(int number_of_philosophers, t_progdata *progdata);
 int		waiter_init(int number_of_forks, t_progdata *progdata);
 int		proc_init(int number_of_philosophers, t_progdata *progdata);
 int		fork_init(int number_of_forks, t_progdata *progdata);
-int		grim_reaper_init(int number_of_philosophers, t_progdata * progdata);
+int		grim_reaper_init(int number_of_philosophers, t_progdata *progdata);
 int		setup(t_progdata *progdata, int argc, char **argv);
 
 /*
@@ -71,6 +71,8 @@ int		identify_self(t_progdata *progdata);
 void	identify_forks(int id, t_progdata *progdata);
 void	inform(char *msg, int id, t_progdata *progdata);
 void	*grim_reaper(void *progdata);
+char	will_die(t_progdata *progdata, long long unsigned int last_meal, \
+		long long unsigned int wait);
 char	is_dead(t_progdata *progdata, long long unsigned int last_meal, \
 		int id);
 char	is_full(t_progdata *progdata, int id);
