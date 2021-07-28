@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 22:08:56 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/28 12:31:35 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 12:33:34 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void	*grim_reaper(void *progdata)
 	{
 		if (pdata->stop)
 			return (NULL);
-		pl_usleep(pdata->time_to_die + 1);
-		//usleep(wait);
+		//pl_usleep(pdata->time_to_die + 1);
+		usleep(50);
 	}
 	exit_status(progdata, STARVED);
 	return (NULL);
