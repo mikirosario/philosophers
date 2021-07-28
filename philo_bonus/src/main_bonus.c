@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 10:24:10 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 23:36:32 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,6 @@ void	closeme(t_progdata *progdata)
 			progdata->bonus_uid);
 	if (progdata->gotforksem && sem_close(progdata->forksem))
 		printf("Failure in sem_close call on forksem in closeme PROC_ID: %d\n",
-			progdata->bonus_uid);
-	if (progdata->gotreapersem && sem_close(progdata->reapersem))
-		printf("Failure in sem_close call on reapersem in closeme PROC_ID: %d\n",
 			progdata->bonus_uid);
 	return ;
 }
@@ -107,7 +104,6 @@ int	main(int argc, char **argv)
 	sem_unlink("/forksem");
 	sem_unlink("/printsem");
 	sem_unlink("/waitersem");
-	sem_unlink("/reapersem");
 	res = setup(&progdata, argc, argv);
 	if (res)
 	{
@@ -118,7 +114,6 @@ int	main(int argc, char **argv)
 	sem_unlink("/forksem");
 	sem_unlink("/printsem");
 	sem_unlink("/waitersem");
-	sem_unlink("/reapersem");
 	closeme(&progdata);
 	if (!res)
 		exit_status(&progdata, EXIT_FAILURE);

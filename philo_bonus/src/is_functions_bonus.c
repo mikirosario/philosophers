@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/28 23:11:22 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 23:38:52 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 {
 	long long unsigned int	time_of_death;
 
-	//sem_wait(progdata->reapersem);
 	if (starved(progdata, last_meal, id))
 	{
 		progdata->philosopher[id].died = 1;
@@ -122,6 +121,5 @@ char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 			"Took more than 10 ms to inform of philosopher death\n"RESET);
 		}
 	}
-	//sem_post(progdata->reapersem);
 	return ((&progdata->philosopher[id])->died);
 }

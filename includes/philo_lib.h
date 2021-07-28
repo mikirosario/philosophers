@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:53:43 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 10:21:29 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 23:38:18 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ typedef struct s_progdata
 	sem_t					*forksem;
 	sem_t					*waitersem;
 	sem_t					*printsem;
-	sem_t					*reapersem;
 	pthread_t				*thread;
 	pthread_mutex_t			*forks;
 	t_philosopher			*philosopher;
@@ -63,7 +62,6 @@ typedef struct s_progdata
 	char					gotprintsem;
 	char					gotwaitersem;
 	char					gotforksem;
-	char					gotreapersem;
 	char					stop;
 }				t_progdata;
 

@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 19:01:24 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 10:22:52 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 23:37:15 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,5 @@ int	setup(t_progdata *progdata, int argc, char **argv)
 	return (philo_init(progdata->number_of_philosophers, progdata) & \
 	waiter_init(progdata->number_of_philosophers, progdata) & \
 	fork_init(progdata->number_of_philosophers, progdata) & \
-	grim_reaper_init(progdata->number_of_philosophers, progdata) & \
 	proc_init(progdata->number_of_philosophers, progdata));
 }
