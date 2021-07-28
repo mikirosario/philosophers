@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 12:38:52 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 12:54:48 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,21 @@ char	think(int id, t_progdata *progdata)
 ** If the philosopher successfully eats, we return 1.
 */
 
+char	will_die(t_progdata *progdata, long long unsigned int last_meal, long long unsigned int wait)
+{
+	long long unsigned int	time_of_death;
+	long long unsigned int	current_time;
+
+	time_of_death = last_meal + progdata->time_to_die;
+	current_time = pl_get_time_msec();
+	if (current_time + wait > time_of_death)
+	{
+		pl_usleep(time_of_death - current_time + 1);
+		return (1);
+	}
+	return (0);
+}
+
 char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 {
 	progdata->philosopher[id].eating = 1;
@@ -158,6 +173,9 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 	*last_meal += pl_get_time_msec() - *last_meal;
 	if (progdata->argc == 6)
 		progdata->philosopher[id].times_ate++;
+	if (will_die(progdata, progdata->philosopher[id].last_meal, progdata->time_to_eat))
+		if (is_dead(progdata, progdata->philosopher[id].last_meal, id))
+			exit_status(progdata, STARVED);
 	pl_usleep(progdata->time_to_eat);
 	progdata->philosopher[id].eating = 0;
 	unlock_forks(progdata);
@@ -250,16 +268,11 @@ void	life_cycle(void *progdata)
 			exit_status(progdata, STARVED);
 		if (!eat(id, &pdata->philosopher[id].last_meal, progdata))
 			break ;
-		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
-			exit_status(progdata, STARVED);
 		inform(MAG"is sleeping"RESET, id, progdata);
-		pdata->stop = 0;
-		if (pthread_create(&pdata->philosopher[id].grim_reaper, NULL, \
-		grim_reaper, progdata))
-			exit_status(progdata, PTHREAD_CREAT_ERR);
+		if (will_die(progdata, pdata->philosopher[id].last_meal, pdata->time_to_sleep))
+			if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
+				exit_status(progdata, STARVED);
 		pl_usleep(pdata->time_to_sleep);
-		pdata->stop = 1;
-		pthread_join(pdata->philosopher[id].grim_reaper, NULL);
 	}
 	exit_status(progdata, FULL);
 }
