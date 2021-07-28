@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 18:57:26 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 23:03:46 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,23 @@ void	unlock_forks(t_progdata *progdata)
 **					|ZAMBRANO	3 ffff	1	DE BEAUVOIR|
 **								ARISTOTLE
 **									2
+**
+** The problem with the waiter semaphore is we don't know how long a philosopher
+** might be waiting, and so we don't know if it will die while waiting for a
+** waiter to become available. To resolve this within the assignment limitations
+** (which don't allow functions that set up shared memory spaces), I create a
+** dedicated grim_reaper thread that lives while process is waiting to get a
+** waiter's attention. The grim_reaper thread runs a continuous liveness check
+** on the philosopher. When the philosopher gets the attention of the waiter,
+** it signals the thread to exit and calls pthread_join on it.
+**
+** This limits the number of simultaneous threads as they will only launch while
+** processes are waiting for a waiter to become available. This becomes relevant
+** with large numbers of philosophers.
+**
+** Thread creation failure at any point will cause the program to exit as if the
+** philosopher had starved. An error message indicating the error will also be
+** printed.
 **
 ** If the philosopher successfully thinks, we return 1.
 */
