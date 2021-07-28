@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/27 17:50:52 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 10:31:00 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,17 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 ** If print semaphore creation fails, an error message is displayed and 0 is
 ** returned. Otherwise 1 is returned.
 */
+
+int	grim_reaper_init(int number_of_philosophers, t_progdata * progdata)
+{
+	(void)number_of_philosophers;
+	progdata->reapersem = sem_open("/reapersem", O_CREAT | O_EXCL, 0644, 6);
+	if (progdata->printsem == SEM_FAILED)
+		return (iamerror(SEM_OPEN_FAIL, "grim_reaper_init"));
+	else
+		progdata->gotreapersem = 1;
+	return (1);
+}
 
 int	philo_init(int number_of_philosophers, t_progdata *progdata)
 {
