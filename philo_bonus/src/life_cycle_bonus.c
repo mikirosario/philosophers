@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 12:31:57 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 12:38:52 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,7 +253,13 @@ void	life_cycle(void *progdata)
 		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
 			exit_status(progdata, STARVED);
 		inform(MAG"is sleeping"RESET, id, progdata);
+		pdata->stop = 0;
+		if (pthread_create(&pdata->philosopher[id].grim_reaper, NULL, \
+		grim_reaper, progdata))
+			exit_status(progdata, PTHREAD_CREAT_ERR);
 		pl_usleep(pdata->time_to_sleep);
+		pdata->stop = 1;
+		pthread_join(pdata->philosopher[id].grim_reaper, NULL);
 	}
 	exit_status(progdata, FULL);
 }
