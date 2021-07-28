@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 11:53:25 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 12:16:34 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,14 @@ void	unlock_forks(t_progdata *progdata)
 char	think(int id, t_progdata *progdata)
 {
 	inform(CYN"is thinking"RESET, id, progdata);
+	
+	progdata->stop = 0;
+	if (pthread_create(&progdata->philosopher[id].grim_reaper, NULL, \
+	grim_reaper, progdata))
+		exit_status(progdata, PTHREAD_CREAT_ERR);
 	sem_wait(progdata->waitersem);
+	progdata->stop = 1;
+	pthread_join(progdata->philosopher[id].grim_reaper, NULL);
 	sem_wait(progdata->forksem);
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	sem_wait(progdata->forksem);
@@ -230,15 +237,21 @@ void	life_cycle(void *progdata)
 
 	pdata = ((t_progdata *)progdata);
 	id = pdata->bonus_uid;
-	if (pthread_create(&pdata->philosopher[id].grim_reaper, NULL, \
-	grim_reaper, progdata))
-		exit_status(progdata, PTHREAD_CREAT_ERR);
+	// if (pthread_create(&pdata->philosopher[id].grim_reaper, NULL, 
+	// grim_reaper, progdata))
+	// 	exit_status(progdata, PTHREAD_CREAT_ERR);
 	pdata->philosopher[id].last_meal = pl_get_time_msec();
 	while (1)
 	{
+		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
+			exit_status(progdata, STARVED);
 		think(id, progdata);
+		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
+			exit_status(progdata, STARVED);
 		if (!eat(id, &pdata->philosopher[id].last_meal, progdata))
 			break ;
+		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
+			exit_status(progdata, STARVED);
 		inform(MAG"is sleeping"RESET, id, progdata);
 		pl_usleep(pdata->time_to_sleep);
 	}
