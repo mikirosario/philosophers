@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 22:08:56 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/28 12:09:38 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 12:31:35 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	*grim_reaper(void *progdata)
 
 	pdata = (t_progdata *)progdata;
 	//wait = pdata->time_to_die * 1000 + 1000;
-	pl_usleep(pdata->time_to_die + 1);
+	//pl_usleep(pdata->time_to_die + 1);
 	while (!is_dead(pdata, pdata->philosopher[pdata->bonus_uid].last_meal, \
 	pdata->bonus_uid))
 	{

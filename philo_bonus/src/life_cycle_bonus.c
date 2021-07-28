@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 12:29:02 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/28 12:31:57 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,14 +112,12 @@ char	think(int id, t_progdata *progdata)
 	inform(CYN"is thinking"RESET, id, progdata);
 	
 	progdata->stop = 0;
-	printf("TEST\n");
 	if (pthread_create(&progdata->philosopher[id].grim_reaper, NULL, \
 	grim_reaper, progdata))
 		exit_status(progdata, PTHREAD_CREAT_ERR);
 	sem_wait(progdata->waitersem);
 	progdata->stop = 1;
 	pthread_join(progdata->philosopher[id].grim_reaper, NULL);
-	printf("TEST\n");
 	sem_wait(progdata->forksem);
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	sem_wait(progdata->forksem);
@@ -245,10 +243,8 @@ void	life_cycle(void *progdata)
 	pdata->philosopher[id].last_meal = pl_get_time_msec();
 	while (1)
 	{
-		printf("HERE?\n");
 		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
 			exit_status(progdata, STARVED);
-		printf("HERE?\n");
 		think(id, progdata);
 		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
 			exit_status(progdata, STARVED);
