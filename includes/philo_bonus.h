@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 21:12:48 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/28 23:37:48 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 12:14:47 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # define PTHREAD_MUTEX_INIT_ERR 5
 # define FORK_FAILURE 6
 # define SEM_OPEN_FAIL 7
+# define NO_PHILOS 8
 # define STARVED 2
 # define FULL 3
 
@@ -47,12 +48,6 @@ void	exit_status(t_progdata *progdata, int status);
 int		iamerror(int error_code, char *error_func);
 
 /*
-** Unit Tests
-*/
-
-char	get_args_utest(int argc, char **argv, t_progdata *progdata);
-
-/*
 ** Initialization
 */
 
@@ -66,8 +61,6 @@ int		setup(t_progdata *progdata, int argc, char **argv);
 ** Life Cycle
 */
 
-int		identify_self(t_progdata *progdata);
-void	identify_forks(int id, t_progdata *progdata);
 void	inform(char *msg, int id, t_progdata *progdata);
 void	*grim_reaper(void *progdata);
 char	will_die(t_progdata *progdata, long long unsigned int last_meal, \

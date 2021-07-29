@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 22:08:56 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/28 23:31:47 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 12:05:57 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,26 @@
 #include <signal.h>
 
 /*
-** This thread is spawned by each process and acts as a liveness monitor. If the
-** process meets the conditions for starvation at any point, is_dead will return
+** This thread is spawned by each process before it begins waiting for the
+** waitersem and acts as a liveness monitor. If the process meets the conditions
+** for starvation at any point while waiting for a waiter, is_dead will return
 ** true. The is_dead function calls inform to notify of the first death, and
 ** inform will NOT return the printsem binary semaphore after a death
 ** notification, so the death notification will be the last thing printed.
 **
-** We check liveness every 5 milliseconds, so we will report a philosopher's
-** death from 0 - ~5 milliseconds after it happens. In practice, on my laptop,
-** if a philosopher dies at 310 we are informed from 311 to 316 at latest. The
-** school Macs might be better at this.
+** We check liveness every 50 microseconds. Raising this doesn't seem to make a
+** difference to performance. I guess CPU will be occupied with the sleep
+** function regardless.
 **
 ** If the philosopher is dead, we exit with the STARVED status. If there is only
-** one philosopher, of course, it must starve. Exiting destroys the process
-** along with the thread, so nothing more to do here. The main function will
+** one philosopher, of course, it must and will starve, as it will never get a
+** waiter, since there will be zero waiters. Exiting destroys the process along
+** with the thread, so nothing more to do here. The main function will then
 ** proceed to kill and reap the rest of the children as soon as it receives
 ** confirmation that a process has exited with the STARVED status. :)
 **
 ** Semaphore possession doesn't matter as all remaining processes will now be
-** terminated.
+** terminated. Except that one weird bug in the inform function... ;p
 */
 
 void	*grim_reaper(void *progdata)
@@ -53,8 +54,11 @@ void	*grim_reaper(void *progdata)
 
 /*
 ** Finds matching number in array of size size. If none exists, returns 0.
-** In this program, the numbers we're looking for are child PIDs. Children will
-** never have PID 0, so we'll treat PID 0 as the end of the array.
+** In this program, we send the deadchildren array here as arr to see if it
+** contains the PID we pass as num. The numbers we're looking for are child
+** PIDs. Children will never have PID above 0, so we'll treat PID 0 as the
+** end of the array. If waitpid threw an error we will do the comparison but it
+** will always fail.
 */
 char	pidcmp(int num, int *arr, int size)
 {
@@ -68,13 +72,14 @@ char	pidcmp(int num, int *arr, int size)
 }
 
 /*
-** This function waits to reap philosophers that have died because they were
-** 'full' (ate number_of_times_a_philosopher_must_eat). We know why they died
-** because they exit with status FULL when they die because they are full, and
-** with status STARVED when they die of starvation. As long as philosophers
-** continue to die because they are full, the simulation will continue. If any
-** philosopher dies of starvation, however, we will leave this function and kill
-** the rest to force the simulation to terminate.
+** This function waits to reap philosophers that have terminated because they
+** were 'full' (ate number_of_times_a_philosopher_must_eat) or 'starved'. We
+** know why they died because they exit with status FULL when they die because
+** they are full, and with status STARVED when they die of starvation. As long
+** as philosophers continue to die because they are full, the simulation will
+** continue. If any philosopher dies of starvation, however, we will leave this
+** function and kill all surviving children to force the simulation to
+** terminate.
 **
 ** We do not want to kill philosophers that are already dead.
 **
@@ -84,8 +89,8 @@ char	pidcmp(int num, int *arr, int size)
 ** dead.
 **
 ** If a child dies of starvation we immediately exit the function and return the
-** number of dead children. If all children die because they are full we will
-** return number_of_philosophers.
+** number of dead children. If all children terminate because they are full we
+** will return number_of_philosophers.
 */
 
 int	wait_for_full_philosophers(t_progdata *progdata)

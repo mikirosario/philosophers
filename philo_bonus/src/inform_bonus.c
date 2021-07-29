@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:43:36 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/27 17:45:55 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 11:45:38 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,25 @@
 ** This function will only inform on a philosopher's status if it is alive or if
 ** it died of starvation. Processes waiting to be killed by the parent process
 ** no longer inform of their status, so a dying process does not post its
-** print semaphore.
+** print semaphore. We achieve this by preventing processes that print "died"
+** from returning the printsem.
 **
 ** You'll notice that weird infinite while under the sem_wait.
 **
 ** On the school Macs the program sometimes printed information after the died
-** report on exit. After some testing, my hypothesis is that when the process
-** exits there is a point at which the printsem is deallocated/closed, yet the
-** program is still running, which which causes the sem_wait here to fail and
-** the process to continue and print out messages we don't want. This reliably
-** happens on the school Macs, but does not seem to happen ever on my home Linux
-** laptop.
+** report on exit. After some testing, I have a couple of hypotheses. One
+** possibility is that when each process exits there is a point at which the
+** printsem pointer is deallocated, yet the program is still running. This
+** causes the sem_wait here to fail with -1. Another possibility is that on Mac
+** the sudden exit of the process that holds the printsem is itself interpreted
+** as an error, while Linux tolerates it - though I'm more sceptical of this one
+** because I'd expect more messages to be printed then.
+**
+** Regardless of the cause, it's confirmed that on Mac this sem_wait frequently
+** fails upon exit. Any processes blocked on this sem_wait, waiting for
+** printsem, will then continue until the process is terminated and print out
+** messages we don't want. This reliably happens on the school Macs, but does not
+** seem to happen ever on my home Linux laptop.
 **
 ** Either sem_wait or exit has different behaviour on Linux, or my laptop is
 ** just too slow for the program to react faster than the exit function can
@@ -42,10 +50,7 @@
 ** the sem_wait fails, we can avoid this bug. Not the most elegant solution, of
 ** course (if sem_wait ever legitimately fails the program will hang), but I'd
 ** be more elegant about it IF WE WERE ALLOWED TO USE MORE FUNCTIONS for the
-** assignment. Actually if we could use more functions I'd set up a single
-** shared memory space instead screwing around with all these reaper threads. :p
-**
-** So I gotta make it work however I can. xD 
+** assignment. :p
 */
 
 void	inform(char *msg, int id, t_progdata *progdata)

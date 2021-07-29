@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 17:08:32 by miki              #+#    #+#             */
-/*   Updated: 2021/07/26 17:44:06 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 10:47:16 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,7 @@ int	iamerror(int error_code, char *error_func)
 		printf(RED"Failure in fork call in %s\n"RESET, error_func);
 	else if (error_code == SEM_OPEN_FAIL)
 		printf(RED"Failure in sem_open call in %s\n"RESET, error_func);
+	else if (error_code == NO_PHILOS)
+		printf(RED"Are zero philosophers immortal?\n"RESET);
 	return (0);
 }

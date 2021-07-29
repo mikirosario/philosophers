@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/28 23:38:52 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 12:19:09 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,12 @@ long long unsigned int wait)
 }
 
 /*
-** This function will check whether a philosopher has starved, and also will
-** replenish it if it has the eating status.
+** This function will check whether a philosopher has starved.
 **
 ** First we get the difference between the current timestamp and the last meal.
 **
 ** Then we check whether that difference is greater than time_to_die. If it is,
 ** we return 1 to confirm the philosopher has starved.
-**
-** If the philosopher has the eating status, we add the difference to the
-** last_meal.
 **
 ** We return 0 to indicate a philosopher has not starved.
 */
@@ -121,5 +117,5 @@ char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 			"Took more than 10 ms to inform of philosopher death\n"RESET);
 		}
 	}
-	return ((&progdata->philosopher[id])->died);
+	return (progdata->philosopher[id].died);
 }

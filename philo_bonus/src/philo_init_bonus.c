@@ -6,12 +6,11 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 23:36:56 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 11:55:38 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
-#include <string.h>
 
 /*
 ** This function opens the waiter semaphore. The waiter semaphore controls
@@ -61,12 +60,15 @@ int	fork_init(int number_of_forks, t_progdata *progdata)
 }
 
 /*
-** This function spawns all the child processes.
+** This function spawns all the child processes. As such, it is the last setup
+** function that we call.
 **
 ** First we create an array to store the pid of every child process we will
-** create.
+** create. We use pl_bzero to zero it. When comparing these pids later with the
+** deadchildren array we will treat the arrays as null-terminated, so no PID 0
+** will be accepted as valid.
 **
-** Next we initialize time by getting a timestamp, which we save at
+** Next, we initialize time by getting a timestamp, which we save at
 ** progdata->time_start. We'll subtract this from future timestamps to get the
 ** relative times for all processes, so this time counts as the "simulation
 ** start".
@@ -92,7 +94,7 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 	progdata->children = malloc(number_of_philosophers * sizeof(pid_t));
 	if (progdata->children == NULL)
 		return (iamerror(MALLOC_ERR, "proc_init"));
-	memset(progdata->children, -1, number_of_philosophers * sizeof(pid_t));
+	pl_bzero(progdata->children, number_of_philosophers * sizeof(pid_t));
 	progdata->time_start = pl_get_time_msec();
 	while (number_of_philosophers-- > 0)
 	{
@@ -109,17 +111,21 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 }
 
 /*
-** PHILOSOPHER STRUCT ARRAY NOT NEEDED FOR BONUS; REMOVE!
 ** This function reserves memory for an array of t_philosopher structs
 ** corresponding to each philosopher, which will be used to store the particular
 ** status of each philosopher. They are zeroed upon creation.
-** PHILOSOPHER STRUCT ARRAY NOT NEEDED FOR BONUS; REMOVE!
+**
+** A philosopher struct array is not needed for the bonus program, since each
+** process has its own memory space, but quite honestly I couldn't be arsed to
+** change it and all the code that references it that I carried over from the
+** original project. :p But yeah, it should more properly just be a single
+** struct that every process would then create a duplicate of. ;)
 **
 ** This function will create the deadchildren array. This array is used to keep
-** track of children that have exited because they are full. If a child exits
-** because it is full and later another child dies and we kill all the remaining
-** child processes, we will skip over the children that already terminated by
-** checking for their pid in the deadchildren array.
+** track of the PIDs of children that have exited. If a child exits, whether
+** because it is full or starved, and the parent later wants to kill all the
+** remaining child processes, it will skip over the children that already exited
+** by checking for their pid in the deadchildren array.
 **
 ** Processes will never have the pid 0, so we initialize the array with 0.
 **
@@ -127,11 +133,11 @@ int	proc_init(int number_of_philosophers, t_progdata *progdata)
 ** binary named semaphore that works essentially like a mutex and will be used
 ** to regulate exclusive access to stdout from all processes.
 **
-** The time_to_eat, time_to_sleep and time_to_die variables passed by the user
-** are transformed to microseconds for use with the usleep function.
-**
 ** If print semaphore creation fails, an error message is displayed and 0 is
-** returned. Otherwise 1 is returned.
+** returned.
+**
+** If all of this setup succeeds, 1 is returned. Otherwise, iamerror is called
+** to throw the error - iamerror always returns 0.
 */
 
 int	philo_init(int number_of_philosophers, t_progdata *progdata)

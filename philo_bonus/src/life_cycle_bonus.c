@@ -6,34 +6,11 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 23:03:46 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 12:21:07 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
-
-/*
-** This function checks whether there is only one philosopher. If there is only
-** one philosopher, there is only one fork. Since philosophers need two forks to
-** eat, a sole philosopher must die.
-**
-** In that case, we have the philosopher sleep for time_to_die milliseconds,
-** and then we run is_dead to register its death. I add 1ms to time_to_sleep,
-** otherwise sometimes the is_dead instructions are executed so quickly that the
-** philosopher survives and the program hangs waiting for its termination.
-**
-** If there is more than one philosopher this function does nothing.
-*/
-
-char	one_philosopher(t_progdata *progdata)
-{
-	if (progdata->number_of_philosophers == 1)
-	{
-		pl_usleep(progdata->time_to_die);
-		return (1);
-	}
-	return (0);
-}
 
 /*
 ** This function simply has the philosopher return its forks to the table by
@@ -41,8 +18,6 @@ char	one_philosopher(t_progdata *progdata)
 ** Note that when both forks are returned to the table we also free a waiter so
 ** that another philosopher can get that waiter's attention and pick up the
 ** forks.
-**
-** The redundant printfs are brought to you by norminette.
 */
 
 void	unlock_forks(t_progdata *progdata)
@@ -58,10 +33,8 @@ void	unlock_forks(t_progdata *progdata)
 		if (sem_post(progdata->forksem) == -1)
 		{
 			sem_wait(progdata->printsem);
-			printf(RED);
-			printf("Failed %s sem_post(progdata->forksem) in unlock_forks\n", \
-			msg[i]);
-			printf(RESET);
+			printf(RED"Failed %s sem_post(progdata->forksem) in unlock_forks\n" \
+			RESET, msg[i]);
 			sem_post(progdata->printsem);
 		}
 		i++;
@@ -70,10 +43,11 @@ void	unlock_forks(t_progdata *progdata)
 }
 
 /*
+** This function performs the thinking tasks of a philosopher.
+**
 ** Each philosopher is seated in a circle with a pile of forks in the middle.
 **
-** Thinking happens after sleeping. Before thinking we check if a philosopher
-** slept too long and is dead. If it is, we return 0. If not, we start thinking.
+** Thinking happens after sleeping.
 **
 ** "Thinking" is basically what a philosopher does before picking up its forks.
 ** Forks are integers in the forksem semaphore and there are as many forks as
@@ -82,7 +56,7 @@ void	unlock_forks(t_progdata *progdata)
 ** more forks.
 **
 ** Philosophers are served by waiters. Waiters are integers in the waitsem
-** semaphore. Waiters serve philosophers forks two at a time. There is one
+** semaphore. Waiters serve philosophers forks two at a time. Thus, there is one
 ** waiter for every pair of forks, which is to say there are number_of_forks / 2
 ** waiters.
 **
@@ -104,27 +78,28 @@ void	unlock_forks(t_progdata *progdata)
 **								ARISTOTLE
 **									2
 **
-** The problem with the waiter semaphore is we don't know how long a philosopher
-** might be waiting, and so we don't know if it will die while waiting for a
-** waiter to become available. To resolve this within the assignment limitations
-** (which don't allow functions that set up shared memory spaces), I create a
-** dedicated grim_reaper thread that lives while process is waiting to get a
-** waiter's attention. The grim_reaper thread runs a continuous liveness check
-** on the philosopher. When the philosopher gets the attention of the waiter,
-** it signals the thread to exit and calls pthread_join on it.
+** The problem with the waiter semaphore is we don't know exactly how long a
+** philosopher might be waiting, and so we don't know if it will die while
+** waiting for a waiter to become available. To resolve this within the
+** assignment limitations (which don't allow functions that set up shared memory
+** spaces ¬¬), I create a dedicated grim_reaper thread that lives while a
+** process is waiting to get a waiter's attention. The grim_reaper thread runs a
+** continuous liveness check on the philosopher. When the philosopher gets the
+** attention of the waiter, it signals the thread to exit and calls pthread_join
+** on it. So it's "occasional continuous liveness monitoring". :p
 **
-** This limits the number of simultaneous threads as they will only launch while
-** processes are waiting for a waiter to become available. This becomes relevant
-** with large numbers of philosophers.
+** This reduces the number of simultaneous threads as they will only launch while
+** processes are waiting for a waiter to become available. This helps reduce the
+** CPU load with large numbers of philosophers.
 **
 ** Thread creation failure at any point will cause the program to exit as if the
 ** philosopher had starved. An error message indicating the error will also be
-** printed.
+** printed in that case.
 **
-** If the philosopher successfully thinks, we return 1.
+** If the philosopher successfully thinks, we return.
 */
 
-char	think(int id, t_progdata *progdata)
+void	think(int id, t_progdata *progdata)
 {
 	inform(CYN"is thinking"RESET, id, progdata);
 	progdata->stop = 0;
@@ -138,33 +113,38 @@ char	think(int id, t_progdata *progdata)
 	inform(YEL"has taken a fork"RESET, id, progdata);
 	sem_wait(progdata->forksem);
 	inform(YEL"has taken a fork"RESET, id, progdata);
-	return (1);
 }
 
 /*
-** This function performs the eating tasks of a philosopher. First we set the
-** philosopher status to eating. Then we check if it is full. A philosopher is
-** full if it has eaten number_of_times_a_philosopher_must_eat times. If no
-** argument was passed for that, is_full returns 0. Then we check if the
-** philosopher is dead. A philosopher is dead if the time since its last meal
-** is greater than the time_to_die. If the philosopher is not dead, and it is
-** eating, the time_to_die is also reset here.
+** This function performs the eating tasks of a philosopher. First we check if
+** it is full. A philosopher is full if it has eaten
+** number_of_times_a_philosopher_must_eat times. If no argument was passed for
+** that, is_full always returns 0.
 **
-** If a philosopher is full or is dead, its forks are unlocked and we return 0.
+** If a philosopher is full before the meal its forks are unlocked and we return
+** 0.
 **
-** Otherwise, we inform that it is eating. If a sixth argument was provided, we
+** Otherwise, we inform that it is eating. If the philosopher is eating then the
+** last_meal time is reset here. If a sixth argument was provided, we also
 ** increment the times_ate variable for the philosopher.
 **
-** Then the philosopher waits for time_to_eat milliseconds.
+** Then the philosopher waits for time_to_eat milliseconds. Before the wait we
+** call will_die to determine whether the philosopher will die while eating. If
+** so, we make it wait for as much time as it has left to live and call is_dead
+** to inform of the death before exiting with the STARVED status. This causes
+** all philosophers to be terminated by the parent.
 **
-** Then the philosopher unlocks its forks.
+** Otherwise, the philosopher waits for time_to_eat milliseconds. Then the
+** philosopher unlocks its forks and its waiter.
 **
-** If the philosopher successfully eats, we return 1.
+** If the philosopher is full AFTER the meal we also return 0.
+**
+** If the philosopher successfully eats and is neither dead nor full, we return
+** 1.
 */
 
 char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 {
-	progdata->philosopher[id].eating = 1;
 	if (is_full(progdata, id))
 	{
 		unlock_forks(progdata);
@@ -179,14 +159,13 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 		if (is_dead(progdata, progdata->philosopher[id].last_meal, id))
 			exit_status(progdata, STARVED);
 	pl_usleep(progdata->time_to_eat);
-	progdata->philosopher[id].eating = 0;
 	unlock_forks(progdata);
 	if (is_full(progdata, id))
 		return (0);
 	return (1);
 }
 
-/*eat
+/*
 ** The basic life cycle of a philosopher. First we want to initialize the
 ** philosopher. Since we pass our struct pointer as void, to avoid having to
 ** cast it to its type every time we use it, we copy its address to a pointer
@@ -237,17 +216,29 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 **
 ** Once the initial set-up is complete we enter the life cycle loop. This is an
 ** infinite loop in which the philosopher thinks, eats and sleeps in that order.
-** Thinking fails if a philosopher dies before thinking. Eating fails if a
-** philosopher either dies or is 'full' (times_ate is equal to
-** number_of_times_a_philosopher_must_eat) before eating. After eating, we also
-** check to see if a philosopher is full or dead (took too long to eat). In any
-** of these cases, we break the loop and leave the loop.
+** Thinking fails if a philosopher dies while thinking. Eating fails if a
+** philosopher is 'full' (times_ate is equal to
+** number_of_times_a_philosopher_must_eat) before eating, dies while eating, or
+** is full after eating.
 **
-** Otherwise, we enter sleeping mode and loop back to thinking.
+** Otherwise, we enter sleeping mode and loop back to thinking. We also check to
+** see if a philosopher dies while sleeping.
 **
-** When we leave the loop, if the philosopher died, we return EXIT_FAILURE. If
-** it is alive and stopped eating because it is 'full', we return EXIT_SUCCESS.
-** This is so the parent process can distinguish between types of termination.
+** Since we know the sleeping and eating times beforehand, we can predict
+** whether a philosopher will die while sleeping or eating. We use will_die for
+** this. If we predict a philosopher's death this way, will_die will make it
+** wait until its time of death and is_dead will confirm and inform of its
+** death. We then exit with the STARVED status. We don't know the thinking time
+** beforehand so spawn a thread with a liveness monitor while thinking.
+**
+** When we leave the loop, if the philosopher died, we return STARVED. If
+** it is alive and stopped eating because it is 'full', we return FULL. If
+** thread creation failed in the think function, we return PTHREAD_CREAT_ERR,
+** which for all intents and purposes behaves the same as STARVED, except an
+** extra error message is then printed.
+**
+** This is so the parent process can distinguish between types of termination
+** and act accordingly.
 */
 
 void	life_cycle(void *progdata)
@@ -260,11 +251,7 @@ void	life_cycle(void *progdata)
 	pdata->philosopher[id].last_meal = pl_get_time_msec();
 	while (1)
 	{
-		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
-			exit_status(progdata, STARVED);
 		think(id, progdata);
-		if (is_dead(progdata, pdata->philosopher[id].last_meal, id))
-			exit_status(progdata, STARVED);
 		if (!eat(id, &pdata->philosopher[id].last_meal, progdata))
 			break ;
 		inform(MAG"is sleeping"RESET, id, progdata);

@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 23:36:32 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 12:11:59 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void	closeme(t_progdata *progdata)
 }
 
 /*
-** This function tries to close any potentially open semaphores and exits with
-** the status passed as status.
+** This function tries to free any dynamically allocated memory and exits with
+** the status passed as status. A classic. ;)
 */
 
 void	exit_status(t_progdata *progdata, int status)
@@ -87,7 +87,9 @@ void	exit_status(t_progdata *progdata, int status)
 ** Next, if the number of dead children after waiting for all the full
 ** philosophers is less than the number of philosophers, this means that a
 ** philosopher died of starvation AND there are still surviving child processes.
-** So, in that case, we call kill_philosophers to kill the survivors.
+** So, in that case, we call kill_philosophers to kill the survivors. (Otherwise
+** either there was only one philosopher, who starved, or all philosophers
+** terminated because they were full).
 **
 ** Once the simulation terminates we unlink the named semaphores, free all the
 ** dynamically allocated memory, close any open semaphores, and exit

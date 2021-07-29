@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 19:01:24 by miki              #+#    #+#             */
-/*   Updated: 2021/07/28 23:37:15 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 10:45:29 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int	setup(t_progdata *progdata, int argc, char **argv)
 		return (iamerror(ARG_SYN_ERR, "main"));
 	else
 		get_args(argc, argv, progdata);
+	if (progdata->number_of_philosophers == 0)
+		return (iamerror(NO_PHILOS, "main"));
 	return (philo_init(progdata->number_of_philosophers, progdata) & \
 	waiter_init(progdata->number_of_philosophers, progdata) & \
 	fork_init(progdata->number_of_philosophers, progdata) & \
