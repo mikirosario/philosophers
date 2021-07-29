@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 02:02:29 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/27 19:24:55 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 16:34:26 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,9 @@ char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 	static char				first_death = 1;
 
 	if (starved(progdata, id, last_meal) || \
-	(&progdata->philosopher[id])->murdered)
+	progdata->philosopher[id].murdered)
 	{
-		(&progdata->philosopher[id])->died = 1;
+		progdata->philosopher[id].died = 1;
 		time_of_death = last_meal + progdata->time_to_die;
 		inform(RED"died"RESET, id, progdata);
 		if (first_death)
@@ -119,5 +119,5 @@ char	is_dead(t_progdata *progdata, long long unsigned int last_meal, int id)
 			pthread_mutex_unlock(&progdata->printlock);
 		}
 	}
-	return ((&progdata->philosopher[id])->died);
+	return (progdata->philosopher[id].died);
 }

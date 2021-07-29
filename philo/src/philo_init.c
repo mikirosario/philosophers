@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mrosario <mrosario@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:31:51 by miki              #+#    #+#             */
-/*   Updated: 2021/07/24 04:42:10 by mrosario         ###   ########.fr       */
+/*   Updated: 2021/07/29 16:27:47 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@
 ** If this goes well we initialize each mutex in the array and simultaneously
 ** use the variable in the progdata struct that records the number_of_forks as a
 ** counter so it will also be set to the proper value after initialization. If
-** any of the mutex_init calls fails, then the progdata->number_of_forks
-** variable will record the position of the last initialized mutex in the array,
-** which can then be used to destroy only the initialized mutexes.
+** any of the mutex_init calls fail, then the progdata->number_of_forks variable
+** will record the position of the last initialized mutex in the array, which
+** can then be used to destroy only the initialized mutexes.
 **
 ** If any initialization fails, 0 is returned and an appropriate error message
 ** is displayed. Otherwise, 1 is returned.
@@ -87,10 +87,8 @@ int	thread_init(int number_of_philosophers, t_progdata *progdata)
 ** corresponding to each philosopher, which will be used to store the particular
 ** status of each philosopher. They are zeroed upon creation.
 **
-** This function will also initialize three additional mutexes used by the
-** project, idlock, waiter and printlock. The time_to_eat and time_to_sleep
-** variables passed by the user are transformed to microseconds for use with the
-** usleep function.
+** This function will also initialize two additional mutexes used by the
+** project: idlock and printlock.
 **
 ** The gotidlock and gotprintlock flags are used to control calls to
 ** pthread_mutex_destroy.

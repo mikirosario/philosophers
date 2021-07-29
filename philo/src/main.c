@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/17 15:41:57 by miki              #+#    #+#             */
-/*   Updated: 2021/07/27 19:20:36 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 16:23:25 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	freeme(t_progdata *progdata)
 	progdata->thread = NULL;
 	return ;
 }
+
 /*
 ** This function will return 1 if ANY philosophers are not full, meaning have
 ** not eaten at least number_of_times_a_philosopher_must_eat.
@@ -72,7 +73,7 @@ void	hemlock(t_progdata *progdata)
 
 	i = 0;
 	while (i < (size_t)progdata->number_of_philosophers)
-		(&progdata->philosopher[i++])->murdered = 1;
+		progdata->philosopher[i++].murdered = 1;
 }
 
 /*
@@ -116,7 +117,7 @@ void	tjoin(t_progdata *progdata)
 ** Nevertheless, while this achieves the goal of continuous life-status checking
 ** without communication between philosophers, in slow CPUs or with many
 ** philosophers you get to a point where checking the status of every philosopher
-** takes longer than 10ms. The school Macs seem able to handle it, though. :)
+** takes longer than 10ms. The 42 school Macs are able to handle it, though. :)
 **
 ** Philosophers are monitored even after they finish all tasks in their thread.
 ** I don't use detatch_thread, so the thread data persists even when the

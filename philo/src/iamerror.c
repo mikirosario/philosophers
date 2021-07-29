@@ -6,11 +6,15 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 17:08:32 by miki              #+#    #+#             */
-/*   Updated: 2021/07/25 13:16:45 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 16:35:30 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+/*
+** Pretty self-explanatory, no? ;)
+*/
 
 int	iamerror(int error_code, char *error_func)
 {

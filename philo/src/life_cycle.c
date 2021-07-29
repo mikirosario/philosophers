@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:43:19 by miki              #+#    #+#             */
-/*   Updated: 2021/07/27 19:19:50 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 16:30:47 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,11 @@
 ** one philosopher, there is only one fork. Since philosophers need two forks to
 ** eat, a sole philosopher must die. If fork1 == fork2 then there is only one
 ** fork, and therefore only one philosopher. In that case, we have the
-** philosopher sleep for time_to_die milliseconds, register its death, and
-** unlock its mutexes before returning 1. Otherwise, we return 0. I add 1ms to
-** time_to_sleep, otherwise sometimes the is_dead instructions are executed so
-** quickly that the philosopher survives and the program hangs waiting for its
-** termination.
+** philosopher sleep for time_to_die milliseconds and return 1. This is so that
+** the thread doesn't get stuck waiting for a double mutex lock on the same fork
+** since it lacks two forks.
 **
-** If there is more than one philosopher we immediately return 0. Otherwise, we
-** wait time_to_die milliseconds so the thread doesn't get stuck waiting for the
-** the double mutex lock on the same fork, since it will inevitably die as it
-** lacks two forks.
+** If there is more than one philosopher we immediately return 0.
 */
 
 char	one_philosopher(int id, t_progdata *progdata)
@@ -39,9 +34,7 @@ char	one_philosopher(int id, t_progdata *progdata)
 
 /*
 ** This function simply unlocks the philosopher's forks if the philosopher has
-** locked them. If an unlock fails, we notify the user.
-**
-** The special printf style is brought to you by norminette. ;)
+** locked them. If an unlock fails, we notify the user with the error message.
 */
 
 void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
@@ -87,26 +80,33 @@ void	unlock_forks(int fork1, int fork2, int id, t_progdata *progdata)
 ** philosophers array, and a fork to its left and right. It will identify one
 ** fork as fork1 and another fork as fork2, and will always pick up fork1 first.
 **
-** Each philosopher identifies its fork1 as its right fork (fork[id]) and its
-** fork2 as its left fork as (fork[id + 1]), except the last philosopher, who
-** identifies its fork1 as its left fork (fork[0]) and fork2 as its right fork
-** (fork[id]).
+** Each even-numbered philosopher identifies its fork1 as its right fork
+** (fork[id]) and its fork2 as its left fork as (fork[id + 1]), while each
+** odd-numbered philosopher identifies its fork1 as its left fork (fork[id]) and
+** its fork2 as its right fork (fork[id + 1]). We use modular arithmetic, since
+** the forks are in a circle, so the last fork + 1 = the first fork.
 **
-** This prevents deadlock because, even if every philosopher were to take their
-** fork1 simultaneously, at least one philosopher would be unable to do it,
-** since philosopher[0] and philosopher[n] have the same fork1, and so that
-** philosopher would also be unable to take its fork2, and so someone would be
-** able to eat.
+** This prevents deadlock because pairs of neighbours have the same fork1, so
+** even if every philosopher were to take their fork1 simultaneously, only one
+** neighbour will succeed, while the other would have to wait, and thus be
+** unable to take their fork2, which will be the fork1 of their other neighbour
+** and can then be used by them.
 **
 ** So the table looks like this, where SOCRATES is philosopher[0], DE BEAUVOIR
 ** is philosopher[1], ARISTOTLE is philosopher[2] and ZAMBRANO is
 ** philosopher[3].
 **
 **							fork1<-|0|->fork2
-**					|->fork1 f0	SOCRATES  f1 fork1<----|
+**					|->fork1 f0	SOCRATES  f1 fork2<----|
 **					|ZAMBRANO	3	@	1	DE BEAUVOIR|
-**					|->fork2 f3	ARISTOTLE f2 fork2<----|
+**					|->fork2 f3	ARISTOTLE f2 fork1<----|
 **							fork2<-|2|->fork1
+**
+** Say Socrates takes fork1, Zambrano must wait; De Beauvoir takes fork1,
+** Aristotle must wait. De Beauvoir and Socrates both try to take fork2, which
+** is the same fork between them. Forks are mutexes, so only one can succeed.
+** Whoever wins, eats. As soon as they release their forks, the one left waiting
+** eats.
 **
 ** If the philosopher successfully thinks, we return 1.
 */
@@ -133,24 +133,35 @@ char	think(int id, t_progdata *progdata)
 }
 
 /*
-** This function performs the eating tasks of a philosopher. First we set the
-** philosopher status to eating. Then we check if it is full. A philosopher is
-** full if it has eaten number_of_times_a_philosopher_must_eat times. If no
-** argument was passed for that, is_full returns 0. Then we check if the
-** philosopher is dead. A philosopher is dead if the time since its last meal
-** is greater than the time_to_die. If the philosopher is not dead, and it is
-** eating, the time_to_die is also reset here.
+** This function performs the eating tasks of a philosopher.
 **
-** If a philosopheris dead, its forks are unlocked and we return 0.
+** First we set the philosopher status to eating. First we check if the
+** philosopher is dead or murdered. A philosopher is flagged as dead if the
+** liveness monitor in the main function finds at any time that the time since
+** its last meal (current_time - last_meal) is greater than the time_to_die. A
+** philosopher is flagged as murdered when the liveness monitor in the main
+** function calls the hemlock function after it detects any philosopher has
+** died.
 **
-** If a philosopher is made full by this meal, we flip its full flag.
+** Then we check if the philosopher is full. A philosopher is full if it has
+** eaten number_of_times_a_philosopher_must_eat times. If no argument was passed
+** for that, is_full returns 0.
 **
-** Otherwise, we inform that it is eating. If a sixth argument was provided, we
-** increment the times_ate variable for the philosopher.
+** If the philosopher neither dead, murdered nor full, we inform that the
+** philosopher is eating and immediately update the last_meal time, which will
+** now be equal to the time of the last_meal plus the time elapsed since the
+** last_meal, which is just a needlessly complicated way of saying it is equal
+** to the current time. But bear with me. xD
+**
+** If a sixth argument was provided, we increment the times_ate variable for the
+** philosopher.
 **
 ** Then the philosopher waits for time_to_eat milliseconds.
 **
 ** Then the philosopher unlocks its forks.
+**
+** Then we check whether the philosopher was made full by this meal. If so, we
+** set its full flag (within is_full) and return 0.
 **
 ** If the philosopher successfully eats, we return 1.
 */
@@ -183,13 +194,7 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 ** philosopher. Since we pass our struct pointer as void, to avoid having to
 ** cast it to its type every time we use it, we copy its address to a pointer
 ** that is already cast to the right type. Bit of a waste of a cycle but it
-** does make the code cleaner.
-**
-** After that we'll consider this philosopher's life to have started, so we
-** record the birthdate as our last_meal time. The birthdate is the current time
-** minus the simuation start time. This treats the start time as the 'zero time'
-** and records any subsequent increments in relation to the start time. The
-** start time is initialized just before the first thread is created.
+** does make the code cleaner. We also indicate evenness using the even flag.
 **
 ** The first thing a newborn philosopher will need to do is identify itself by
 ** taking a unique ID number. A philosopher's unique ID number is equal to its
@@ -200,7 +205,8 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 ** We will consider that the fork to the right of each philosopher has the same
 ** position in the fork array as the philosopher's ID, and the fork to the left
 ** of each philosopher will have 1 + the philosopher's ID, except for the last
-** philosopher, whose left fork will always be 0.
+** philosopher, whose left fork will always be 0, but we'll use modular
+** arithmetic to get back around to it.
 **
 ** The table will look like this:
 **
@@ -214,31 +220,30 @@ char	eat(int id, long long unsigned int *last_meal, t_progdata *progdata)
 **
 ** Once a philosopher has a unique ID number, we use the ID number to identify
 ** the forks that pertain to that philosopher. We want to ensure that each
-** philosopher will always identify the lower-numbered fork as fork1 and the
-** higher-numbered fork as fork2, to avoid deadlock (more on this in the eat
-** description).
-**
-** Generally, fork1 will be fork[philosopher_id] and fork2 will be
-** fork[philosopher_id + 1].
-**
-** However, if the philosopher's ID corresponds to the LAST philosopher, this
-** logic will be inverted as the fork to this philosopher's left will always be
-** fork0. So in this special case, fork1 will be fork[0], while fork2 will be
-** fork[philosopher_id] (the RIGHT fork).
+** even-numbered philosopher will always identify the lower-numbered fork as
+** fork1 and the higher-numbered fork as fork2 and each odd-numbered philosopher
+** will always identify the higher-numbered fork as fork 1 and the
+** lower-numbered fork as fork2, to avoid deadlock and maximize concurrency
+** (more on this in the eat description).
 **
 ** If there is only one philosopher there will only be one fork, so both fork1
 ** and fork2 will equal 0. This philosopher will also be the last philosopher,
-** so special case rules will apply.
+** so special case rules will apply (see one_philosopher function).
 **
-** Once the forks are identified we enter the life_cycle loop. This is an
+** After that we'll consider this philosopher's life to have started, so we
+** record the birthdate as our last_meal time. Any to get the time since
+** simulation start you always subtract the start_time from the timestamp (in
+** milliseconds).
+**
+** Once the last_meal time is taken we enter the life_cycle loop. This is an
 ** infinite loop in which the philosopher thinks, eats and sleeps in that order.
-** Thinking fails if a philosopher dies before thinking. Eating fails if a
-** philosopher either dies or is 'full' (times_ate is equal to
-** number_of_times_a_philosopher_must_eat) before eating. After eating, we also
-** check to see if a philosopher is full or dead (took too long to eat). In any
-** of these cases, we break the loop and end the thread.
 **
-** Otherwise, we enter sleeping mode and loop back to thinking.
+** A continuous liveness monitor checks the liveness of every philosopher from
+** the main thread. If a philosopher dies at any point, it is flagged with the
+** died variable so it will exit at the next died check.
+**
+** Whenever a philosopher exits its life cycle we check whether it has to
+** release its fork mutexes before ending the thread.
 */
 
 void	*life_cycle(void *progdata)

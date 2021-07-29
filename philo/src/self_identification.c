@@ -6,7 +6,7 @@
 /*   By: mikiencolor <mikiencolor@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/04 01:50:57 by mrosario          #+#    #+#             */
-/*   Updated: 2021/07/25 12:53:33 by mikiencolor      ###   ########.fr       */
+/*   Updated: 2021/07/29 16:31:27 by mikiencolor      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,17 @@
 ** total forks/philosophers - 1.
 **
 ** We define right forks as those corresponding to the ID of the philosopher in
-** their array, and left forks as those corresponding to the ID + 1. The last
-** philosopher's left fork is the first philosopher's right fork (fork 0), as
-** they are seated in a circle.
+** their array (fork[id]), and left forks as those corresponding to the ID + 1
+** (fork[id + 1]). The last philosopher's left fork is the first philosopher's
+** right fork (fork 0), as they are seated in a circle.
 **
-** Since we want IDMAX + 1 to equal 0 (circular arithmetic), when we add 1 to a
+** Since we want IDMAX + 1 to equal 0 (modular arithmetic), when we add 1 to a
 ** fork number we take the modulo of the fork number by the number of forks.
 ** This way, for example, in a circle with 4 forks numbered 0 - 3:
 **
 ** 3 + 1 = 4 and 4 % 4 = 0, so 3 + 1 = 0.
 ** 3 + 2 = 5 and 5 % 4 = 1, so 3 + 2 = 1.
+** 0 + 1 = 1 and 1 % 4 = 1, so 0 + 1 = 1.
 **
 ** This is like adding times on a clock, basically. :) So now our position
 ** arithmetic treats the forks as if in a circle.
